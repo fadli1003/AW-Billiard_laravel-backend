@@ -1,0 +1,15 @@
+pa make:model Meja -cmr
+sleep(1)
+pa make:model Booking -cmr
+sleep(1)
+pa make:model Jadwal -cmr
+sleep(1)
+pa make:model Payment -cmr
+sleep(1)
+
+
+pa make:request BookingRequest
+pa make:resource BookingResource
+pa make:request MejaRequest
+pa make:resource PaymentResource
+pa make:
