@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('no_meja');
             $table->enum('type', ['biasa', 'VIP']);
-            $table->decimal('harga', 10, 0);
+            $table->decimal('harga_perjam', 10, 0);
             $table->enum('status', ['tersedia', 'maintanance'])->default('tersedia');
             $table->timestamps();
         });

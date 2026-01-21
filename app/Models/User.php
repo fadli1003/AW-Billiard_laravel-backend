@@ -49,7 +49,13 @@ class User extends Authenticatable
         ];
     }
 
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
+    }
+
     public function hasRole($role){
         return $this->role === UserRole::from($role);
     }
+
 }
