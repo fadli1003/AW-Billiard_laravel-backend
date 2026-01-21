@@ -15,7 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('meja_id')->constrained()->onDelete('cascade');
-            $table->dateTime('jadwal_main');
+            $table->dateTime('jam_mulai');
+            $table->dateTime('jam_selesai');
+            $table->integer('durasi');
+            $table->decimal('total_harga', 10, 0);
+            $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled']);
             $table->timestamps();
         });
     }

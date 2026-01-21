@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('mejas', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
+            $table->string('no_meja');
+            $table->enum('type', ['biasa', 'VIP']);
+            $table->decimal('harga', 10, 0);
+            $table->enum('status', ['tersedia', 'maintanance'])->default('tersedia');
             $table->timestamps();
         });
     }

@@ -9,7 +9,7 @@ sleep(1)
 
 
 pa make:request BookingRequest
-pa make:resource BookingResource
 pa make:request MejaRequest
+pa make:resource BookingResource
 pa make:resource PaymentResource
-pa make:
+pa make:resource JadwalResource
