@@ -11,51 +11,52 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+  /** @use HasFactory<\Database\Factories\UserFactory> */
+  use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role'
+  /**
+   * The attributes that are mass assignable.
+   *
+   * @var list<string>
+   */
+  protected $fillable = [
+    'name',
+    'phone',
+    'email',
+    'password',
+    'role'
+  ];
+
+  /**
+   * The attributes that should be hidden for serialization.
+   *
+   * @var list<string>
+   */
+  protected $hidden = [
+    'password',
+    'remember_token',
+  ];
+
+  /**
+   * Get the attributes that should be cast.
+   *
+   * @return array<string, string>
+   */
+  protected function casts(): array
+  {
+    return [
+      'email_verified_at' => 'datetime',
+      'password' => 'hashed'
     ];
+  }
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+  public function booking()
+  {
+    return $this->belongsTo(Booking::class);
+  }
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed'
-        ];
-    }
-
-    public function booking()
-    {
-        return $this->belongsTo(Booking::class);
-    }
-
-    public function hasRole($role){
-        return $this->role === UserRole::from($role);
-    }
-
+  public function hasRole($role)
+  {
+    return $this->role === UserRole::from($role);
+  }
 }
