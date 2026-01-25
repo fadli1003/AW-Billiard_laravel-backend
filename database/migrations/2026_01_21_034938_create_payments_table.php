@@ -18,7 +18,7 @@ return new class extends Migration
       $table->decimal('jumlah_bayar', 10, 0);
       $table->enum('payment_type', ['dp', 'full', 'settlement']);
       $table->string('payment_method')->nullable();
-      $table->enum('status', ['pending', 'success', 'failed', 'expired'])->default('pending');
+      $table->enum('status', ['pending', 'paid', 'failed', 'expired'])->default('pending');
       $table->string('snap_token')->nullable();
       $table->timestamps();
     });
