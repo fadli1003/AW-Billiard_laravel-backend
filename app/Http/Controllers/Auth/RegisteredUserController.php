@@ -24,19 +24,20 @@ class RegisteredUserController extends Controller
       'name' => ['required', 'string', 'max:255'],
       'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
       'phone' => ['required', 'string', 'max:15', 'unique:users,phone'],
-      'password' => ['required', 'confirmed', Rules\Password::defaults()],
+      'password' => ['required', 'confirmed', Rules\Password::min(6)->numbers()->symbols()->mixedCase()],
     ]);
 
     $user = User::create([
       'name' => $request->name,
       'email' => $request->email,
       'password' => Hash::make($request->string('password')),
+      'phone' => $request->phone
     ]);
 
     event(new Registered($user));
 
     Auth::login($user);
 
-    return response()->noContent();
+    return response(['message' => 'Account registered successfully.'], 201);
   }
 }
