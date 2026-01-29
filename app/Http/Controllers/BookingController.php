@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\BookingService;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
+  private BookingService $bookingService;
+  public function __construct(BookingService $bookingService)
+  {
+    $this->bookingService =  $bookingService;
+  }
   /**
    * Display a listing of the resource.
    */
   public function index()
   {
-    //
+    $fields = ['id', 'user_id', 'meja_id', 'jam_main', 'status'];
+    return response()->json($this->bookingService->getAll($fields));
   }
 
   /**
