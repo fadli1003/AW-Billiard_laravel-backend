@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookingRequest;
 use App\Http\Services\BookingService;
 use App\Models\Booking;
 use Illuminate\Http\Request;
@@ -33,9 +34,25 @@ class BookingController extends Controller
   /**
    * Store a newly created resource in storage.
    */
-  public function store(Request $request)
+  public function store(BookingRequest $request)
   {
-    $jadwal_main = $request->tggl . ' ' . $request->jam;
+
+    $exists = Booking::where('jam_mulai', $request->jam_mulai)->where(
+                        function($query) use ($request){
+                          $query->whereBetween('jam_mulai', [$request->jam_mulai, $request->jam_selesai])
+                                ->orWhereBetween('jam_selesai', [$request->jam_mulai, $request->jam_selesai]);
+                        })
+                      ->exists();
+
+    if($exists){
+      return response()->json([
+        'message' => 'Jam tersebut sudah dipesan!'
+      ]);
+    }
+
+    $jadwal_main = $request->tggl . ', ' . $request->jam_mulai . '-' . $request->jam_selesai;
+
+
   }
 
   /**
