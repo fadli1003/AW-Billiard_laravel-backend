@@ -17,7 +17,7 @@ return [
 
   'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
     '%s%s%s',
-    'localhost,localhost:3000,127.0.0.1,127.0.0.1:3000,127.0.0.1:8000,::1,laravel-backend.test,aw-billiard-ui.test,aw-billiard-ui.test:3000,aw-bl-backend.local,aw-bl-backend.local:8000,aw-bl-ui.local,aw-bl-ui.local:3000',
+    'localhost,localhost:3000,127.0.0.1,127.0.0.1:3000,127.0.0.1:8000,::1,laravel-backend.test,api.aw-bl.test,api.aw-bl.test:8000,ui.aw-bl.test,ui.aw-bl.test:3000',
     Sanctum::currentApplicationUrlWithPort(),
     env('FRONTEND_URL') ? ',' . parse_url(env('FRONTEND_URL'), PHP_URL_HOST) : ''
   ))),

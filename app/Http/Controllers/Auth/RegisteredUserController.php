@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Auth\Events\Registered;
@@ -14,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 
 class RegisteredUserController extends Controller
 {
@@ -22,46 +25,31 @@ class RegisteredUserController extends Controller
    *
    * @throws \Illuminate\Validation\ValidationException
    */
-  public function store(Request $request): JsonResponse
+  public function store(RegisterRequest $request): JsonResponse
   {
+    $data = $request->validated();
     DB::beginTransaction();
     try{
-      $rules = $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-        'phone' => ['required', 'string', 'max:15', 'unique:users,phone'],
-        'password' => ['required', 'confirmed', Rules\Password::min(6)->numbers()->symbols()->mixedCase()],
-      ]);
+      $data['password'] = bcrypt($data['password']);
+      $data['role'] = UserRole::user;
+      $user = User::create($data);
 
-      $messages = [
-        'password' => 'Passwordnya yang kuat ya bro, minimal 6 karakter, ada angka, simbol, huruf besar dan kecil.',
-        '*.required' => 'Wajib diisi, jangan dikosongin bro.'
-      ];
+      // $user = new User($data);
+      // $user->save(); sama aja tapi nambah satu baris
 
-      $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->string('password')),
-        'phone' => $request->phone
-      ]);
-
-      $validator = Validator::make($request->all(), $rules, $messages);
-      if($validator->fails()){
-        return response()->json([
-          'message' => 'validation errors.',
-          'errors' => $validator->errors()
-        ], 422);
-      }
-      DB::commit();
-      
       $token = $user->createToken('auth_token')->plainTextToken;
       $request->session()->regenerate();
+
       event(new Registered($user));
-
       Auth::login($user);
+      DB::commit();
+      return response()->json([
+        'message' => 'Account registered successfully.',
+        'token' => $token
+      ], 201);
 
-      return response()->json(['message' => 'Account registered successfully.', 'token' => $token], 201);
-    }catch (Exception $e){
+    } catch (\Exception $e){
+      DB::rollBack();
       return response()->json([
         'message' => 'Terjadi kesalahan',
         'error' => $e->getMessage()

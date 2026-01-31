@@ -12,6 +12,8 @@ use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
+// /** @property \App\Models\User $user */
+
 class AuthenticatedSessionController extends Controller
 {
   /**
@@ -23,24 +25,22 @@ class AuthenticatedSessionController extends Controller
       $request->authenticate();
       $user = Auth::user();
 
-      if($request->wantsJson() && !$request->isFromFrontend()){
+      $data = [
+        'user' => new UserResource($user),
+      ];
+
+      if($request->wantsJson() && !$request->isFromFrontend()
+        ||$request->has('device_name'))
+      {
         $user->tokens->delete();
         $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-          'message' => 'Login Success!',
-          'data' => [
-            'token' => $token,
-            'user' => new UserResource($user),
-          ],
-        ], 200);
+        $data["token"] = $token;
       }
+
       $request->session()->regenerate();
       return response()->json([
         'message' => 'Login Success!',
-        'data' => [
-          'user' => new UserResource($user),
-        ],
+        'data' => $data
       ], 200);
     } catch(ValidationException $e) {
       throw $e;

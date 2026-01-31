@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://aw-bl-ui.local:3000')],
+    'allowed_origins' => [env('FRONTEND_URL', 'http://ui.aw-bl.test:3000', 'http://localhost:3000')],
 
     'allowed_origins_patterns' => [],
 

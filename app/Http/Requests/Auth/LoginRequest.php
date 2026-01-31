@@ -29,9 +29,10 @@ class LoginRequest extends FormRequest
     return [
       'email' => ['required', 'string', 'email'],
       'password' => ['required', 'string'],
+      'device_name' => 'nullable'
     ];
   }
-  
+
   /**
    * Attempt to authenticate the request's credentials.
    *
