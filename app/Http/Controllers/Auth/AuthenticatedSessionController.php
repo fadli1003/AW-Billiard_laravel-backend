@@ -4,35 +4,84 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\UserResource;
+use Exception;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class AuthenticatedSessionController extends Controller
 {
   /**
    * Handle an incoming authentication request.
    */
-  public function store(LoginRequest $request): Response
+  public function store(LoginRequest $request): JsonResponse
   {
-    $request->authenticate();
+    try {
+      $request->authenticate();
+      $user = Auth::user();
 
-    $request->session()->regenerate();
+      if($request->wantsJson() && !$request->isFromFrontend()){
+        $user->tokens->delete();
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-    return response()->noContent();
+        return response()->json([
+          'message' => 'Login Success!',
+          'data' => [
+            'token' => $token,
+            'user' => new UserResource($user),
+          ],
+        ], 200);
+      }
+      $request->session()->regenerate();
+      return response()->json([
+        'message' => 'Login Success!',
+        'data' => [
+          'user' => new UserResource($user),
+        ],
+      ], 200);
+    } catch(ValidationException $e) {
+      throw $e;
+    } catch (Exception $e) {
+      return response()->json([
+        'message' => 'Terjadi Kesalahan saat login!',
+        'error' => $e->getMessage(),
+      ], 500);
+    }
+
+    // $request->authenticate();
+
+    // $token = $request->user()->createToken('auth_token')->plainTextToken;
+    // $request->session()->regenerate();
+
+    // return response()->json([
+    //   'message' => 'You are successfully logged in',
+    //   'token' => $token
+    // ]);
   }
 
   /**
    * Destroy an authenticated session.
    */
-  public function destroy(Request $request): Response
+  public function destroy(Request $request): JsonResponse
   {
-    Auth::guard('web')->logout();
-
-    $request->session()->invalidate();
-
-    $request->session()->regenerateToken();
-
-    return response()->noContent();
+    try{
+      $user = Auth::user();
+      if($user->currentAccessToken()){
+        $user->currentAccessToken()->delete();
+      }else{
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+      }
+      return response()->json([], 204);
+    } catch (\Exception $e) {
+      return response()->json([
+        'message' => 'Terjadi kesalahan',
+        'error' => $e->getMessage()
+      ], 500);
+    }
   }
 }
