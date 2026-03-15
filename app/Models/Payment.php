@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -16,6 +17,10 @@ class Payment extends Model
     'payment_method',
     'status',
     'snap_token'
+  ];
+
+  protected $casts = [
+    'status' => PaymentStatus::class
   ];
 
   public function bookings()

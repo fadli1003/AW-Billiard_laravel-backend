@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\TableStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +17,7 @@ return new class extends Migration
       $table->string('no_meja');
       $table->enum('type', ['biasa', 'VIP']);
       $table->decimal('harga_perjam', 10, 0);
-      $table->enum('status', ['tersedia', 'maintanance'])->default('tersedia');
+      $table->enum('status', TableStatus::values())->default('available');
       $table->timestamps();
     });
   }

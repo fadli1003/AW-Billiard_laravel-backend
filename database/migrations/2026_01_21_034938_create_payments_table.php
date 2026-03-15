@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PaymentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +19,7 @@ return new class extends Migration
       $table->decimal('jumlah_bayar', 10, 0);
       $table->enum('payment_type', ['dp', 'full', 'settlement']);
       $table->string('payment_method')->nullable();
-      $table->enum('status', ['pending', 'paid', 'failed', 'expired'])->default('pending');
+      $table->enum('status', PaymentStatus::values())->default('pending');
       $table->string('snap_token')->nullable();
       $table->timestamps();
     });

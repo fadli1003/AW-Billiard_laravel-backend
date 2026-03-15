@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Attribute;
+
+use App\Enums\BookingStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +29,8 @@ class Booking extends Model
 
   protected $casts = [
     'jam_mulai' => 'datetime',
-    'jam_selesai' => 'datetime'
+    'jam_selesai' => 'datetime',
+    'status' => BookingStatus::class
   ];
 
   public function users()

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TableStatus;
 use Illuminate\Database\Eloquent\Model;
 
 class Meja extends Model
@@ -11,6 +12,10 @@ class Meja extends Model
     'type',
     'harga_perjam',
     'status'
+  ];
+
+  protected $casts = [
+    'status' => TableStatus::class
   ];
 
   public function booking()
