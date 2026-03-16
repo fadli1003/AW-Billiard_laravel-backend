@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Http\Repositories\BookingRepository;
+use Illuminate\Support\Facades\Date;
 
 class BookingService {
   private $booking_repo;
@@ -24,5 +25,10 @@ class BookingService {
   }
   public function delete(string $id){
     return $this->booking_repo->delete($id);
+  }
+
+  public function isBooked(string $meja_id, Date $jam_mulai, Date $jam_selesai)
+  {
+    return $this->booking_repo->isBooked($meja_id, $jam_mulai, $jam_selesai);
   }
 }

@@ -15,7 +15,7 @@ use function Pest\Laravel\get;
 class Booking extends Model
 {
   use SoftDeletes;
-  
+
   public $jadwal;
   protected $appends = ['jadwal'];
   protected $fillable = [
@@ -60,7 +60,7 @@ class Booking extends Model
         $jam_mulai = Carbon::parse($attributes['jam_mulai']);
         $jam_selesai = Carbon::parse($attributes['jam_selesai']);
 
-        return $jam_mulai->translatedFormat('d F') . ', ' . $jam_mulai->format('H:i') . '-' . $jam_selesai->format('H:i');
+        return $jam_mulai->translatedFormat('d F') . ', ' . $jam_mulai->format('H:i') . ' s/d ' . $jam_selesai->format('H:i');
       }
     );
   }

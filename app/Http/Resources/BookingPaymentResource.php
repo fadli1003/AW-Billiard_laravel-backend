@@ -14,6 +14,13 @@ class PaymentResource extends JsonResource
    */
   public function toArray(Request $request): array
   {
-    return parent::toArray($request);
+    return [
+      'booking_id' => new BookingResource($this->booking_id),
+      'order_id' => $this->order_id,
+      'amount_paid' => $this->amount_paid,
+      'payment_type' => $this->payment_type,
+      'payment_method' => $this->payment_method,
+      'status' => $this->status,
+    ];
   }
 }

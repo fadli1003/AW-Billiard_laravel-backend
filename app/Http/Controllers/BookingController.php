@@ -3,15 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Enums\BookingStatus;
-use App\Enums\TableStatus;
 use App\Http\Requests\BookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Http\Services\BookingService;
 use App\Models\Booking;
-use App\Models\Meja;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
@@ -24,7 +19,7 @@ class BookingController extends Controller
 
   public function index()
   {
-    $fields = ['id', 'user_id', 'meja_id', 'status'];
+    $fields = ['id', 'user_id', 'meja_id', 'status', 'total_harga', 'jam_mulai', 'jam_selesai'];
     return response()->json($this->bookingService->getAll($fields));
   }
 
@@ -37,11 +32,15 @@ class BookingController extends Controller
     //                     })
     //                   ->exists();
 
-    $jam_selesai = $request->jam_mulai + $request->durasi;
-    $isBooked = Booking::where('meja_id', $request->meja_id)
-                      ->where('status', BookingStatus::confirmed)
-                      ->whereTimeOverlap($request->jam_mulai, $jam_selesai)
-                      ->exists();
+    $jam_selesai = $request->jam_mulai->addHour($request->durasi);
+
+    // $isBooked = Booking::where('meja_id', $request->meja_id)
+    //                   ->where('status', BookingStatus::confirmed)
+    //                   ->whereTimeOverlap($request->jam_mulai, $jam_selesai)
+    //                   ->exists();
+
+    $isBooked = $this->bookingService->isBooked($request->meja_id, $request->jam_mulai, $jam_selesai);
+
     if($isBooked){
       return response()->json([
         'message' => 'Meja sudah dipesan di jam tersebut!'
@@ -66,7 +65,7 @@ class BookingController extends Controller
         'message' => 'Terjadi Kesalahan',
         'error' => $e->getMessage(),
         'data' => null
-      ], 400);
+      ], 500);
     }
   }
 
@@ -111,7 +110,7 @@ class BookingController extends Controller
         'message' => 'Terjadi Kesalahan',
         'error' => $e->getMessage(),
         'data' => null
-      ], 400);
+      ], 500);
     }
   }
 

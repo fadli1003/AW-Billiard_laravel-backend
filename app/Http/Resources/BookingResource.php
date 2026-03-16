@@ -18,7 +18,8 @@ class BookingResource extends JsonResource
       'meja_id' => new MejaResource($this->meja_id),
       'user_id' => new UserResource($this->user_id),
       'type' => $this->type,
-      'jadwal' => $this->jadwal,
+      'jadwal' => $this->jam_mulai->translatedFormat('d F') . ', ' . $this->jam_mulai->translatedFormat('H:i') . 's/d' . $this->jam_selesai->translatedFormat('H:i'),
+      // 'jadwal' => $this->jadwal,
       'durasi' => $this->durasi,
       'total_harga' => $this->total_harga
     ];

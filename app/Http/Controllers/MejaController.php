@@ -4,14 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MejaRequest;
 use App\Http\Resources\MejaResource;
+use App\Http\Services\MejaService;
 use App\Models\Booking;
 use App\Models\Meja;
 
 class MejaController extends Controller
 {
+  private MejaService $meja_service;
+
   public function index()
   {
-    $bookingsInfo = Booking::where('status', 'confirmed')->jadwal();
+    $bookingsInfo = Booking::where('status', 'confirmed')->get('jadwal');
+
     return response()->json([
       'data' => new MejaResource(Meja::all()),
       'bookingsInfo' => $bookingsInfo

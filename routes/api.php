@@ -23,12 +23,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
   //Users
   Route::get('/users/{id}/bookings', [BookingController::class, 'users.bookings']);
 
-
   Route::apiResource('meja', MejaController::class);
   // Route::apiResource('payments', PaymentController::class)->withTrashed();
 
   //Nested resources
   Route::apiResource('bookings.payment', BookingPaymentController::class)->withTrashed();
-  });
+});
   Route::apiResource('bookings', BookingController::class)->withTrashed();
 

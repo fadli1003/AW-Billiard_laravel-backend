@@ -16,7 +16,7 @@ return new class extends Migration
       $table->id();
       $table->foreignId('booking_id')->constrained()->onDelete('cascade');
       $table->string('order_id');
-      $table->decimal('jumlah_bayar', 10, 0);
+      $table->decimal('amount_paid', 10, 0);
       $table->enum('payment_type', ['dp', 'full', 'settlement']);
       $table->string('payment_method')->nullable();
       $table->enum('status', PaymentStatus::values())->default('pending');

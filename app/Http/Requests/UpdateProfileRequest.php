@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
-class RegisterRequest extends FormRequest
+class UpdateProfileRequest extends FormRequest
 {
   /**
    * Determine if the user is authorized to make this request.
@@ -26,9 +26,8 @@ class RegisterRequest extends FormRequest
   {
     return [
       'name' => ['required', 'string', 'max:255'],
-      'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user?->id)],
-      'phone' => ['required', 'string', 'max:15', Rule::unique(User::class)->ignore($this->user?->id)],
-      'photo' => ['image', 'mimes:png,jpg,jpeg,webp', 'max:2048'],
+      'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,' . $this->user->id],
+      'phone' => ['required', 'string', 'max:15', Rule::unique(User::class)->ignore($this->user->phone)],
       'password' => ['required', 'confirmed', Password::min(6)->numbers()->symbols()->mixedCase()],
     ];
   }
@@ -37,7 +36,6 @@ class RegisterRequest extends FormRequest
   {
     return [
       'email.unique' => 'Akun ini udah terdaftar bro!',
-      'phone,unique' => 'No ponsel ini sudah terdaftar bro!',
       'password.confirmed' => 'Password konfirmasinya beda cuk!',
       'password' => 'Passwordnya yang kuat ya bro, minimal 6 karakter, ada angka, simbol, huruf besar dan kecil.',
       '*.required' => 'Wajib diisi, jangan dikosongin bro.'
