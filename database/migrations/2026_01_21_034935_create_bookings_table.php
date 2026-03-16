@@ -22,6 +22,7 @@ return new class extends Migration
       // $table->boolean('cash')->default(false);
       $table->decimal('total_harga', 10, 0);
       $table->enum('status', BookingStatus::values())->default('pending');
+      $table->softDeletes();
       $table->timestamps();
     });
   }

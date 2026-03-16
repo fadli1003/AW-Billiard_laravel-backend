@@ -14,4 +14,8 @@ pa make:resource BookingResource
 pa make:resource PaymentResource
 pa make:resource JadwalResource
 
-pa make:model operationalHours -mcrR
+pa make:model OperationalHours -mcrR
+pa make:controller HRM/PayrollController --model=Payroll --api --requests
+pa make:model Branch -mcrR --api
+
+pa make:class Http/Repositories/BranchRepository
