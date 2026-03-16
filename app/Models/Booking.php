@@ -15,6 +15,7 @@ use function Pest\Laravel\get;
 class Booking extends Model
 {
   use SoftDeletes;
+  
   public $jadwal;
   protected $appends = ['jadwal'];
   protected $fillable = [

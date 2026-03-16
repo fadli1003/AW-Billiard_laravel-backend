@@ -18,7 +18,7 @@ class TableIsAvailable implements ValidationRule
     {
       $table = Meja::find($value);
 
-      if (!$table || $table->status === TableStatus::available) {
+      if (!$table || !$table->status === TableStatus::available) {
         $fail('Sorry, The table you choosed is not available.');
       }
       

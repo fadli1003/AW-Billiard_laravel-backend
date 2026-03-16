@@ -6,7 +6,7 @@ use App\Models\AwProfile;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class jamOperasional implements ValidationRule
+class JamOperasional implements ValidationRule
 {
     /**
      * Run the validation rule.

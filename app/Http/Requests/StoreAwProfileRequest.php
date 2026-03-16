@@ -11,7 +11,7 @@ class StoreAwProfileRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreAwProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-          //
+          'day' => 'required|numeric|min:0|max:6',
+          'open_time' => 'required|date_format:H:i',
+          'close_time' => 'required|date_format:H:i|after:open_time'
         ];
     }
 }

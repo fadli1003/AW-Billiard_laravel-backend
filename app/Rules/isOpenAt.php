@@ -6,7 +6,7 @@ use App\Models\operationalHours;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class isOpenAt implements ValidationRule
+class IsOpenAt implements ValidationRule
 {
     /**
      * Run the validation rule.

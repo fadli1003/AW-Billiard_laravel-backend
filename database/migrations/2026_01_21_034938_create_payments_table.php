@@ -21,6 +21,7 @@ return new class extends Migration
       $table->string('payment_method')->nullable();
       $table->enum('status', PaymentStatus::values())->default('pending');
       $table->string('snap_token')->nullable();
+      $table->softDeletes();
       $table->timestamps();
     });
   }

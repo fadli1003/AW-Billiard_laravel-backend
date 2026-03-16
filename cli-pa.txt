@@ -13,3 +13,5 @@ pa make:request MejaRequest
 pa make:resource BookingResource
 pa make:resource PaymentResource
 pa make:resource JadwalResource
+
+pa make:model operationalHours -mcrR

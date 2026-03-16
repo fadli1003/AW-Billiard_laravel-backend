@@ -28,10 +28,11 @@ class BookingRequest extends FormRequest
     return [
       'user_id' => 'required|exists:users,id',
       'meja_id' => ['required', 'exists:mejas,id', new TableIsAvailable],
-      'status' => ['required', Rule::in(BookingStatus::values())],
       'jam_mulai' => 'required|date|after:now',
-      'durasi' => 'required|integer|min:1|max:5',
-      'total_harga' => 'required|numeric'
+      'duration' => 'required|integer|min:1|max:5',
+      'amount_paid' => 'required|numeric|min:20000',
+      'total_harga' => 'required|numeric',
+      // 'cash' => 'required|boolean'
     ];
   }
 }

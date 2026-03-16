@@ -19,6 +19,7 @@ return new class extends Migration
       $table->dateTime('jam_mulai');
       $table->dateTime('jam_selesai');
       $table->integer('durasi');
+      // $table->boolean('cash')->default(false);
       $table->decimal('total_harga', 10, 0);
       $table->enum('status', BookingStatus::values())->default('pending');
       $table->timestamps();

@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use App\Enums\BookingStatus;
 use App\Enums\TableStatus;
 use App\Http\Requests\BookingRequest;
+use App\Http\Resources\BookingResource;
 use App\Http\Services\BookingService;
 use App\Models\Booking;
 use App\Models\Meja;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
@@ -20,29 +24,12 @@ class BookingController extends Controller
 
   public function index()
   {
-    $fields = ['id', 'user_id', 'meja_id', 'jam_main', 'status'];
+    $fields = ['id', 'user_id', 'meja_id', 'status'];
     return response()->json($this->bookingService->getAll($fields));
   }
 
   public function store(BookingRequest $request)
   {
-    $meja = Meja::findOrFail($request->meja_id);
-
-    if($meja->status !== TableStatus::available){
-      $msg = 'Meja sedang digunakan';
-      if( $meja->status === TableStatus::maintenance ){
-        $msg = 'Meja dalam perawatan';
-      }
-      return response()->json([
-        'message' => $msg
-      ], 422);
-    }
-
-    $isBooked = Booking::where('meja_id', $request->meja_id)
-                        ->where('status', BookingStatus::confirmed)
-                        ->whereTimeOverLap($request->jam_mulai, $request->jam_selesai)
-                        ->exists();
-
     // $exists = Booking::where('jam_mulai', $request->jam_mulai)
     //                   ->where(function($query) use ($request){
     //                       $query->whereBetween('jam_mulai', [$request->jam_mulai, $request->jam_selesai])
@@ -50,29 +37,87 @@ class BookingController extends Controller
     //                     })
     //                   ->exists();
 
+    $jam_selesai = $request->jam_mulai + $request->durasi;
+    $isBooked = Booking::where('meja_id', $request->meja_id)
+                      ->where('status', BookingStatus::confirmed)
+                      ->whereTimeOverlap($request->jam_mulai, $jam_selesai)
+                      ->exists();
     if($isBooked){
       return response()->json([
         'message' => 'Meja sudah dipesan di jam tersebut!'
       ], 422);
     }
 
-    $jadwal_main = $request->tggl . ', ' . $request->jam_mulai . '-' . $request->jam_selesai;
+    $data = $request->validated();
+    $data['jam_selesai'] = $jam_selesai;
+    DB::beginTransaction();
+    try {
+      $booking = Booking::create($data);
 
+      DB::commit();
+      return response()->json([
+        'message' => 'Booking created successfully.',
+        'data' => new BookingResource($booking)
+      ], 201);
+    }catch(\Exception $e) {
+      DB::rollBack();
 
+      return response()->json([
+        'message' => 'Terjadi Kesalahan',
+        'error' => $e->getMessage(),
+        'data' => null
+      ], 400);
+    }
   }
 
   public function show(Booking $booking)
   {
-    //
+    return response()->json(new BookingResource($booking));
   }
 
-  public function update(Request $request, Booking $booking)
+  public function update(BookingRequest $request, Booking $booking)
   {
-    //
+    $jam_selesai = $request->jam_mulai + $request->durasi;
+    $isBooked = Booking::where('meja_id', $request->meja_id)
+                      ->where('status', BookingStatus::confirmed)
+                      ->whereTimeOverlap($request->jam_mulai, $jam_selesai)
+                      ->exists();
+    if($isBooked){
+      return response()->json([
+        'message' => 'Meja sudah dipesan di jam tersebut!'
+      ], 422);
+    }
+
+    $data = $request->validated();
+    $data['jam_selesai'] = $jam_selesai;
+
+    // if(Auth::user()->role === 'admin' && $data['cash'] === true) {
+    //   $data['status'] = 'confirmed';
+    // }
+
+    DB::beginTransaction();
+    try {
+      $booking->update($data);
+
+      DB::commit();
+      return response()->json([
+        'message' => 'Booking created successfully.',
+        'data' => new BookingResource($booking),
+      ], 200);
+    }catch(\Exception $e) {
+      DB::rollBack();
+
+      return response()->json([
+        'message' => 'Terjadi Kesalahan',
+        'error' => $e->getMessage(),
+        'data' => null
+      ], 400);
+    }
   }
 
   public function destroy(Booking $booking)
   {
-    //
+    $booking->delete();
+    return response()->json(['message' => 'Booking deleted successfully.'], 204);
   }
 }

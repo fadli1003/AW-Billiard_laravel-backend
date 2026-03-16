@@ -10,5 +10,5 @@ enum TableStatus: String
 
   case available = 'available';
   case maintenance = 'maintenance';
-  case playing = 'paying';
+  case playing = 'playing';
 }
