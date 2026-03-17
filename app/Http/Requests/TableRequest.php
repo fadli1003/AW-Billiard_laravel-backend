@@ -6,7 +6,7 @@ use App\Enums\TableStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class MejaRequest extends FormRequest
+class TableRequest extends FormRequest
 {
   /**
    * Determine if the user is authorized to make this request.
@@ -24,9 +24,9 @@ class MejaRequest extends FormRequest
   public function rules(): array
   {
     return [
-      'tableNo' => 'required|numeric',
-      'type' => 'required|in:biasa,VIP',
-      'pricePerhour' => 'required|numeric|min:20000',
+      'table_code' => 'required|string|max:10',
+      'type' => 'required|in:standard,VIP',
+      'price_perhour' => 'required|numeric|min:20000',
       'status' => ['required', Rule::in(TableStatus::values())],
     ];
   }

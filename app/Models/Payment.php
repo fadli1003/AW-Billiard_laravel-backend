@@ -12,7 +12,7 @@ class Payment extends Model
   protected $fillable = [
     'booking_id',
     'order_id',
-    'jumlah_bayar',
+    'amount_paid',
     'payment_type',
     'payment_method',
     'status',
@@ -26,5 +26,9 @@ class Payment extends Model
   public function bookings()
   {
     return $this->hasMany(Booking::class);
+  }
+  public function users()
+  {
+    return $this->hasManyThrough(User::class, Booking::class);
   }
 }

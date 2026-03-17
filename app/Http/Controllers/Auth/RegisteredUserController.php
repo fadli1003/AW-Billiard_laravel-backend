@@ -25,7 +25,7 @@ class RegisteredUserController extends Controller
     DB::beginTransaction();
     try{
       $data['password'] = bcrypt($data['password']);
-      $data['role'] = UserRole::user;
+      $data['role'] = UserRole::customer;
       $user = User::create($data);
 
       // $user = new User($data);

@@ -5,12 +5,12 @@ namespace App\Models;
 use App\Enums\TableStatus;
 use Illuminate\Database\Eloquent\Model;
 
-class Meja extends Model
+class Table extends Model
 {
   protected $fillable = [
-    'no_meja',
+    'table_code',
     'type',
-    'harga_perjam',
+    'price_perhour',
     'status'
   ];
 
@@ -18,8 +18,8 @@ class Meja extends Model
     'status' => TableStatus::class
   ];
 
-  public function booking()
+  public function bookings()
   {
-    return $this->belongsTo(Booking::class);
+    return $this->hasMany(Booking::class);
   }
 }

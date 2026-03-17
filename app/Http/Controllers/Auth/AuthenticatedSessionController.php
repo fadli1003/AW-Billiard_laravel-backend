@@ -29,8 +29,8 @@ class AuthenticatedSessionController extends Controller
         'user' => new UserResource($user),
       ];
 
-      if($request->wantsJson() && !$request->isFromFrontend()
-        ||$request->has('device_name'))
+      if($request->wantsJson() && (!$request->isFromFrontend()
+        ||$request->has('device_name')))
       {
         // $user->tokens->delete();
         $token = $user->createToken('auth_token')->plainTextToken;

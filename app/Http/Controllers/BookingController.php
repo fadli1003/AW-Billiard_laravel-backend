@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\BookingStatus;
+use App\Models\Booking;
+use App\Http\Services\BookingService;
 use App\Http\Requests\BookingRequest;
 use App\Http\Resources\BookingResource;
-use App\Http\Services\BookingService;
-use App\Models\Booking;
 use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
@@ -19,7 +18,7 @@ class BookingController extends Controller
 
   public function index()
   {
-    $fields = ['id', 'status', 'total_harga', 'jam_mulai', 'jam_selesai'];
+    $fields = ['*'];
     $bookings = $this->bookingService->getAll($fields);
     return BookingResource::collection($bookings);
   }
@@ -27,11 +26,11 @@ class BookingController extends Controller
   // public function store(BookingRequest $request)
   // {
 
-  //   $jam_selesai = $request->jam_mulai->addHour($request->durasi);
+  //   $end_time = $request->start_time->addHour($request->durasi);
 
   //   $isBooked = Booking::where('meja_id', $request->meja_id)
   //                     ->where('status', BookingStatus::confirmed)
-  //                     ->whereTimeOverlap($request->jam_mulai, $jam_selesai)
+  //                     ->whereTimeOverlap($request->start_time, $end_time)
   //                     ->exists();
 
   //   if($isBooked){
@@ -41,7 +40,7 @@ class BookingController extends Controller
   //   }
 
   //   $data = $request->validated();
-  //   $data['jam_selesai'] = $jam_selesai;
+  //   $data['end_time'] = $end_time;
   //   DB::beginTransaction();
   //   try {
   //     $booking = Booking::create($data);
@@ -65,7 +64,7 @@ class BookingController extends Controller
   public function store(BookingRequest $request)
   {
     $data = $request->validated();
-    $data['jam_selesai'] = $data['jam_mulai']->addHour($data['durasi']);
+    $data['end_time'] = $data['start_time']->addHour($data['duration']);
 
     // if(Auth::user()->role === 'admin' && $data['cash'] === true) {
     //   $data['status'] = 'confirmed';
@@ -79,7 +78,7 @@ class BookingController extends Controller
       ], 201);
     } catch (\Exception $e) {
       return response()->json([
-        'message' => 'Gagal melakukan pemesanan.',
+        'message' => 'Booking proccess failed.',
         'error' => $e->getMessage()
       ], 422);
     }
@@ -93,8 +92,8 @@ class BookingController extends Controller
   public function update(BookingRequest $request, Booking $booking)
   {
     $data = $request->validated();
-    $jam_selesai = $data['jam_mulai']->addHour($data['durasi']);
-    $data['jam_selesai'] = $jam_selesai;
+    $end_time = $data['start_time']->addHour($data['duration']);
+    $data['end_time'] = $end_time;
 
     // DB::beginTransaction();
     try {
@@ -109,7 +108,7 @@ class BookingController extends Controller
       DB::rollBack();
 
       return response()->json([
-        'message' => 'Terjadi Kesalahan',
+        'message' => 'Something wrong happend',
         'error' => $e->getMessage(),
         'data' => null
       ], 422);

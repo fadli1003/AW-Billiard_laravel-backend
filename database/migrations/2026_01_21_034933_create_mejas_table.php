@@ -12,11 +12,11 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::create('mejas', function (Blueprint $table) {
+    Schema::create('tables', function (Blueprint $table) {
       $table->id();
-      $table->string('no_meja');
-      $table->enum('type', ['biasa', 'VIP']);
-      $table->decimal('harga_perjam', 10, 0);
+      $table->string('table_code', 10);
+      $table->enum('type', ['standard', 'VIP']);
+      $table->decimal('price_perhour', 10, 0);
       $table->enum('status', TableStatus::values())->default('available');
       $table->timestamps();
     });
@@ -27,6 +27,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('mejas');
+    Schema::dropIfExists('tables');
   }
 };

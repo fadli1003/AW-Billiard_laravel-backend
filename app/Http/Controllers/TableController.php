@@ -2,34 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\MejaRequest;
-use App\Http\Resources\MejaResource;
-use App\Http\Services\MejaService;
+use App\Http\Requests\TableRequest;
+use App\Http\Resources\TableResource;
+use App\Http\Services\TableService;
 use App\Models\Booking;
-use App\Models\Meja;
+use App\Models\Table;
 
-class MejaController extends Controller
+class TableController extends Controller
 {
-  private MejaService $meja_service;
+  private TableService $table_service;
 
   public function index()
   {
-    $bookingsInfo = Booking::where('status', 'confirmed')->get('jadwal');
+    $bookingsInfo = Booking::where('status', 'confirmed')->get('schedule');
 
     return response()->json([
-      'data' => new MejaResource(Meja::all()),
+      'data' => new TableResource(Table::all()),
       'bookingsInfo' => $bookingsInfo
     ]);
   }
 
-  public function store(MejaRequest $request)
+  public function store(TableRequest $request)
   {
     $data = $request->validated();
     try{
-      $meja = Meja::create($data);
+      $table = Table::create($data);
       return response()->json([
         'message' => 'Table added successfully.',
-        'data' => $meja
+        'data' => $table
       ]);
     } catch (\Exception $e){
       return response()->json([
@@ -40,19 +40,19 @@ class MejaController extends Controller
     }
   }
 
-  public function show(Meja $meja)
+  public function show(Table $table)
   {
-    return response()->json(new MejaResource($meja));
+    return response()->json(new TableResource($table));
   }
 
-  public function update(MejaRequest $request, Meja $meja)
+  public function update(TableRequest $request, Table $table)
   {
     $data = $request->validated();
     try{
-      $meja->update($data);
+      $table->update($data);
       return response()->json([
         'message' => 'Table updated successfully.',
-        'data' => new MejaResource($meja),
+        'data' => new TableResource($table),
       ]);
     } catch (\Exception $e){
       return response()->json([
@@ -63,7 +63,7 @@ class MejaController extends Controller
     }
   }
 
-  public function destroy(Meja $meja)
+  public function destroy(Table $table)
   {
     //
   }

@@ -15,14 +15,14 @@ return new class extends Migration
     Schema::create('bookings', function (Blueprint $table) {
       $table->id();
       $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-      $table->foreignId('meja_id')->constrained()->cascadeOnDelete();
-      $table->dateTime('jam_mulai');
-      $table->dateTime('jam_selesai');
-      $table->integer('durasi');
+      $table->foreignId('table_id')->constrained()->cascadeOnDelete();
+      $table->dateTime('start_time');
+      $table->dateTime('end_time');
+      $table->integer('duration');
       // $table->boolean('cash')->default(false);
-      $table->decimal('total_harga', 10, 0);
+      $table->decimal('total_price', 10, 0);
       $table->enum('status', BookingStatus::values())->default('pending');
-      $table->index(['meja_id', 'status', 'jam_mulai', 'jam_selesai'], 'idx_booking_availability');
+      $table->index(['table_id', 'status', 'start_time', 'end_time'], 'idx_booking_availability');
       $table->softDeletes();
       $table->timestamps();
     });

@@ -28,6 +28,7 @@ class User extends Authenticatable
     'phone',
     'photo',
     'email',
+    'address',
     'password',
     'role'
   ];
@@ -66,7 +67,7 @@ class User extends Authenticatable
     return $this->role === UserRole::from($role);
   }
 
-  public function getPhotoAttribute($value)
+  public function getPhotoUrlAttribute($value)
   {
     return $this->photo ? url(Storage::url($value)) : url(Storage::url('img/default-profile'));
   }

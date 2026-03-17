@@ -16,21 +16,21 @@ class Booking extends Model
 {
   use SoftDeletes;
 
-  public $jadwal;
-  protected $appends = ['jadwal'];
+  public $schedule;
+  protected $appends = ['schedule'];
   protected $fillable = [
     'user_id',
-    'meja_id',
-    'jam_mulai',
-    'jam_selesai',
-    'durasi',
-    'total_harga',
+    'table_id',
+    'start_time',
+    'end_time',
+    'duration',
+    'total_price',
     'status',
   ];
 
   protected $casts = [
-    'jam_mulai' => 'datetime',
-    'jam_selesai' => 'datetime',
+    'start_time' => 'datetime',
+    'end_time' => 'datetime',
     'status' => BookingStatus::class
   ];
 
@@ -39,9 +39,9 @@ class Booking extends Model
     return $this->belongsTo(User::class);
   }
 
-  public function mejas()
+  public function table()
   {
-    return $this->hasMany(Meja::class);
+    return $this->belongsTo(Table::class);
   }
 
   public function payment()
@@ -53,21 +53,21 @@ class Booking extends Model
   // {
   //   return Attribute::make(
   //     get: function (mixed $value, array $attributes) {
-  //       if(!$attributes['jam_mulai'] || !$attributes['jam_selesai']){
+  //       if(!$attributes['jam_mulai'] || !$attributes['end_time']){
   //         return null;
   //       }
 
   //       $jam_mulai = Carbon::parse($attributes['jam_mulai']);
-  //       $jam_selesai = Carbon::parse($attributes['jam_selesai']);
+  //       $end_time = Carbon::parse($attributes['end_time']);
 
-  //       return $jam_mulai->translatedFormat('d F') . ', ' . $jam_mulai->format('H:i') . ' s/d ' . $jam_selesai->format('H:i');
+  //       return $jam_mulai->translatedFormat('d F') . ', ' . $jam_mulai->format('H:i') . ' s/d ' . $end_time->format('H:i');
   //     }
   //   );
   // }
 
   // public function getJadwalAttribute(){
   //   $jam_mulai = Carbon::parse($this->jam_mulai);
-  //   $jam_selesai = Carbon::parse($this->jam_selesai);
-  //   return $this->jadwal = $jam_mulai->format('H:i').''.$jam_selesai;
+  //   $end_time = Carbon::parse($this->end_time);
+  //   return $this->jadwal = $jam_mulai->format('H:i').''.$end_time;
   // }
 }

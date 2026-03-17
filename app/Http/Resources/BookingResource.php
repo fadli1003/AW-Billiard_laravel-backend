@@ -16,11 +16,14 @@ class BookingResource extends JsonResource
   {
     return [
       'id' => $this->id,
-      'meja_id' => new MejaResource($this->whenLoaded('meja')),
-      'user_id' => new UserResource($this->whenLoaded('user')),
-      'type' => $this->type,
-      'durasi' => $this->durasi,
-      'total_harga' => $this->total_harga
+      // 'table_info' => new TableResource($this->whenLoaded('table')),
+      'table_code' => $this->table->table_code,
+      'booking_info' => new UserResource($this->whenLoaded('user')),
+      'duration' => $this->duration,
+      'total_price' => $this->total_price,
+      'schedule' => $this->start_time->translatedFormat('d F') . ', ' .
+                  $this->start_time->translatedFormat('H:i') . ' s/d ' .
+                  $this->end_time->translatedFormat('H:i')
     ];
   }
 }

@@ -27,11 +27,11 @@ class BookingRequest extends FormRequest
   {
     return [
       'user_id' => 'required|exists:users,id',
-      'meja_id' => ['required', 'exists:mejas,id', new TableIsAvailable],
-      'jam_mulai' => 'required|date|after:now',
+      'table_id' => ['required', 'exists:tables,id', new TableIsAvailable],
+      'start_time' => 'required|date|after:now',
       'duration' => 'required|integer|min:1|max:5',
       'amount_paid' => 'required|numeric|min:20000',
-      'total_harga' => 'required|numeric',
+      'total_price' => 'required|numeric|min:10000',
       // 'cash' => 'required|boolean'
     ];
   }

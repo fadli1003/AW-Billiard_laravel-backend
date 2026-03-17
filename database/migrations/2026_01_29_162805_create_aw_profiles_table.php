@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('aw_profiles', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name', 50);
             $table->tinyInteger('day')->unsigned();
             $table->boolean('is_open')->default(true);
             $table->time('open_time');
