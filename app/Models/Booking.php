@@ -34,9 +34,9 @@ class Booking extends Model
     'status' => BookingStatus::class
   ];
 
-  public function users()
+  public function user()
   {
-    return $this->hasMany(User::class);
+    return $this->belongsTo(User::class);
   }
 
   public function mejas()
@@ -49,21 +49,21 @@ class Booking extends Model
     return $this->belongsTo(Payment::class);
   }
 
-  protected function jadwal(): Attribute
-  {
-    return Attribute::make(
-      get: function (mixed $value, array $attributes) {
-        if(!$attributes['jam_mulai'] || !$attributes['jam_selesai']){
-          return null;
-        }
+  // protected function jadwal(): Attribute
+  // {
+  //   return Attribute::make(
+  //     get: function (mixed $value, array $attributes) {
+  //       if(!$attributes['jam_mulai'] || !$attributes['jam_selesai']){
+  //         return null;
+  //       }
 
-        $jam_mulai = Carbon::parse($attributes['jam_mulai']);
-        $jam_selesai = Carbon::parse($attributes['jam_selesai']);
+  //       $jam_mulai = Carbon::parse($attributes['jam_mulai']);
+  //       $jam_selesai = Carbon::parse($attributes['jam_selesai']);
 
-        return $jam_mulai->translatedFormat('d F') . ', ' . $jam_mulai->format('H:i') . ' s/d ' . $jam_selesai->format('H:i');
-      }
-    );
-  }
+  //       return $jam_mulai->translatedFormat('d F') . ', ' . $jam_mulai->format('H:i') . ' s/d ' . $jam_selesai->format('H:i');
+  //     }
+  //   );
+  // }
 
   // public function getJadwalAttribute(){
   //   $jam_mulai = Carbon::parse($this->jam_mulai);

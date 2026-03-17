@@ -15,11 +15,10 @@ class BookingResource extends JsonResource
   public function toArray(Request $request): array
   {
     return [
-      'meja_id' => new MejaResource($this->meja_id),
-      'user_id' => new UserResource($this->user_id),
+      'id' => $this->id,
+      'meja_id' => new MejaResource($this->whenLoaded('meja')),
+      'user_id' => new UserResource($this->whenLoaded('user')),
       'type' => $this->type,
-      'jadwal' => $this->jam_mulai->translatedFormat('d F') . ', ' . $this->jam_mulai->translatedFormat('H:i') . 's/d' . $this->jam_selesai->translatedFormat('H:i'),
-      // 'jadwal' => $this->jadwal,
       'durasi' => $this->durasi,
       'total_harga' => $this->total_harga
     ];

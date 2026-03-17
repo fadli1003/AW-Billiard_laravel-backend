@@ -32,12 +32,12 @@ class AuthenticatedSessionController extends Controller
       if($request->wantsJson() && !$request->isFromFrontend()
         ||$request->has('device_name'))
       {
-        $user->tokens->delete();
+        // $user->tokens->delete();
         $token = $user->createToken('auth_token')->plainTextToken;
         $data["token"] = $token;
       }
 
-      $request->session()->regenerate();
+      // $request->session()->regenerate();
       return response()->json([
         'message' => 'Login Success!',
         'data' => $data

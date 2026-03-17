@@ -4,6 +4,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\BookingPaymentController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\MejaController;
+use App\Http\Controllers\UserBookingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,4 +31,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
   Route::apiResource('bookings.payment', BookingPaymentController::class)->withTrashed();
 });
   Route::apiResource('bookings', BookingController::class)->withTrashed();
+  Route::apiResource('users.bookings', UserBookingController::class)->withTrashed();
 
+require __DIR__ . '/auth.php';

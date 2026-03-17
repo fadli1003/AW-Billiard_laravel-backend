@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Date;
 class BookingRepository
 {
   public function getAll(array $fields) {
-    return Booking::select($fields)->latest()->paginate(30);
+    return Booking::with('meja', 'user')->select($fields)->latest()->paginate(30);
   }
 
   public function getById(string $id, array $fields) {
-    return Booking::select($fields)->findOrFail($id);
+    return Booking::with('meja', 'user')->select($fields)->findOrFail($id);
   }
 
   public function create(array $data) {

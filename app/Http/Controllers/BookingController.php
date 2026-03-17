@@ -20,7 +20,9 @@ class BookingController extends Controller
   public function index()
   {
     $fields = ['id', 'user_id', 'meja_id', 'status', 'total_harga', 'jam_mulai', 'jam_selesai'];
-    return response()->json($this->bookingService->getAll($fields));
+    $bookings = $this->bookingService->getAll($fields);
+    // dd($bookings);
+    return BookingResource::collection($bookings);
   }
 
   public function store(BookingRequest $request)
@@ -34,12 +36,10 @@ class BookingController extends Controller
 
     $jam_selesai = $request->jam_mulai->addHour($request->durasi);
 
-    // $isBooked = Booking::where('meja_id', $request->meja_id)
-    //                   ->where('status', BookingStatus::confirmed)
-    //                   ->whereTimeOverlap($request->jam_mulai, $jam_selesai)
-    //                   ->exists();
-
-    $isBooked = $this->bookingService->isBooked($request->meja_id, $request->jam_mulai, $jam_selesai);
+    $isBooked = Booking::where('meja_id', $request->meja_id)
+                      ->where('status', BookingStatus::confirmed)
+                      ->whereTimeOverlap($request->jam_mulai, $jam_selesai)
+                      ->exists();
 
     if($isBooked){
       return response()->json([
