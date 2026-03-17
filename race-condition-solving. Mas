@@ -1,0 +1,57 @@
+Skenario ini disebut Race Condition. Masalahnya adalah pengecekan ketersediaan meja terjadi di waktu yang hampir bersamaan (misal 09:00:00 dan 09:00:01), di mana keduanya melihat status meja masih "kosong" karena transaksi pertama belum selesai.
+Berikut adalah cara mengatasinya di Laravel:
+1. Database Locking (Paling Efektif)
+Gunakan Pessimistic Locking (lockForUpdate). Ini akan mengunci baris data meja tersebut sehingga user kedua tidak bisa "membaca" atau "mengambil" meja tersebut sampai transaksi user pertama selesai (Commit/Rollback).
+Contoh di Repository/Service:
+
+use Illuminate\Support\Facades\DB;
+public function createBooking($data) {
+    return DB::transaction(function () use ($data) {
+        // Ambil data meja dan LOCK baris ini agar tidak bisa diakses proses lain
+        $meja = Meja::where('id', $data['meja_id'])
+                    ->lockForUpdate()
+                    ->first();
+
+        // Cek apakah meja sedang dipesan (status pending/booked)
+        $isBooked = Booking::where('meja_id', $meja->id)
+            ->whereIn('status', ['pending', 'confirmed'])
+            ->where('jam_mulai', '<', $data['jam_selesai'])
+            ->where('jam_selesai', '>', $data['jam_mulai'])
+            ->exists();
+
+        if ($isBooked) {
+            throw new \Exception("Meja sudah dipesan di waktu tersebut.");
+        }
+
+        // Jika aman, buat booking
+        return Booking::create($data);
+    });
+}
+
+2. Atomic Locks (Cache Level)
+Jika Anda menggunakan Redis, Anda bisa menggunakan Atomic Locks. Ini seperti "antrean" di pintu masuk. Siapa yang dapat "kunci" meja tersebut duluan, dia yang berhak memproses.
+
+use Illuminate\Support\Facades\Cache;
+
+$lock = Cache::lock('booking_meja_' . $data['meja_id'], 10); // Kunci selama 10 detik
+if ($lock->get()) {
+    // Proses booking di sini...
+
+    $lock->release();
+} else {
+    return response()->json(['message' => 'Meja sedang diproses oleh pengguna lain'], 423);
+}
+
+3. Database Unique Constraint
+Tambahkan Unique Index pada tabel booking untuk kolom meja_id dan waktu. Namun, ini agak sulit jika waktunya bersifat rentang (durasi).
+Untuk billiard, cara terbaik adalah Database Locking (Nomor 1) karena ia menjamin data yang dibaca adalah data paling update sebelum transaksi dilakukan.
+Kesimpulan untuk Kasus Anda:
+Gunakan DB::transaction dikombinasikan dengan lockForUpdate().
+
+   1. User A datang (0.0s) -> Lock meja ID 1.
+   2. User B datang (0.1s) -> Mencoba cek meja ID 1, tapi Database menyuruh User B menunggu karena sedang di-lock User A.
+   3. User A selesai simpan booking -> Lock lepas.
+   4. User B baru bisa lanjut cek -> Sistem mendeteksi meja sudah terisi oleh User A -> User B ditolak.
+
+Apakah Anda ingin saya bantu buatkan Logic Validasi Bentrok Waktu yang lebih detail untuk durasi billiard tersebut?
+

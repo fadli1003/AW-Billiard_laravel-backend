@@ -1,10 +1,10 @@
-pa make:model Meja -cmr
+pa make:model Meja -cmR --api
 sleep(1)
-pa make:model Booking -cmr
+pa make:model Booking -cmR --api
 sleep(1)
-pa make:model Jadwal -cmr
+pa make:model Jadwal -cmR --api
 sleep(1)
-pa make:model Payment -cmr
+pa make:model Payment -cmR --api
 sleep(1)
 
 
@@ -12,10 +12,18 @@ pa make:request BookingRequest
 pa make:request MejaRequest
 pa make:resource BookingResource
 pa make:resource PaymentResource
-pa make:resource JadwalResource
 
 pa make:model OperationalHours -mcrR
 pa make:controller HRM/PayrollController --model=Payroll --api --requests
+
 pa make:model Branch -mcrR --api
 
 pa make:class Http/Repositories/BranchRepository
+
+pa make:migration createBookingUserTable
+pa make:class Http/Repositories/UserBookingRepository
+pa make:class Http/Repositories/UserBookingService
+pa make:controller UserBookingController --api
+
+
+pa make:command ExpirePendingBookings
