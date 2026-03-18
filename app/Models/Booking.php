@@ -2,21 +2,15 @@
 
 namespace App\Models;
 
-// use Attribute;
-
 use App\Enums\BookingStatus;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
-use function Pest\Laravel\get;
 
 class Booking extends Model
 {
   use SoftDeletes;
 
-  public $schedule;
   protected $appends = ['schedule'];
   protected $fillable = [
     'user_id',
@@ -49,25 +43,21 @@ class Booking extends Model
     return $this->belongsTo(Payment::class);
   }
 
-  // protected function jadwal(): Attribute
-  // {
-  //   return Attribute::make(
-  //     get: function (mixed $value, array $attributes) {
-  //       if(!$attributes['jam_mulai'] || !$attributes['end_time']){
-  //         return null;
-  //       }
+  protected function schedule(): Attribute
+  {
+    return Attribute::make(
+      get: function (mixed $value, array $attributes) {
+        if (empty($this->start_time) || empty($this->end_time)) {
+          return null;
+        }
 
-  //       $jam_mulai = Carbon::parse($attributes['jam_mulai']);
-  //       $end_time = Carbon::parse($attributes['end_time']);
+        //tidak dibutuhkan karena sudah didefinisikan di $casts
+        // $start_time = Carbon::parse($attributes['start_time']);
+        // $end_time = Carbon::parse($attributes['end_time']);
 
-  //       return $jam_mulai->translatedFormat('d F') . ', ' . $jam_mulai->format('H:i') . ' s/d ' . $end_time->format('H:i');
-  //     }
-  //   );
-  // }
-
-  // public function getJadwalAttribute(){
-  //   $jam_mulai = Carbon::parse($this->jam_mulai);
-  //   $end_time = Carbon::parse($this->end_time);
-  //   return $this->jadwal = $jam_mulai->format('H:i').''.$end_time;
-  // }
+        return $this->start_time->translatedFormat('d F') . ', ' .
+               $this->start_time->format('H:i') . ' - ' . $this->end_time->format('H:i');
+      }
+    );
+  }
 }

@@ -48,9 +48,9 @@ class BookingService
     return DB::transaction(function () use ($data) {
 
       $this->booking_repo->isBooked(
-        $data['meja_id'],
-        $data['jam_mulai'],
-        $data['jam_selesai']
+        $data['table_id'],
+        $data['start_time'],
+        $data['end_time']
       );
 
       return $this->create([
@@ -60,14 +60,40 @@ class BookingService
     });
   }
 
+  public function createBooking(array $data)
+  {
+    DB::begintransaction();
+
+    try{
+      $this->booking_repo->isBooked(
+        $data['table_id'],
+        $data['start_time'],
+        $data['end_time']
+      );
+
+      $booking = $this->create([
+        ...$data,
+        'status' => 'pending',
+      ]);
+      DB::commit();
+      
+      return $booking;
+
+    } catch (\Exception $e) {
+      DB::rollBack();
+      throw $e;
+    }
+
+  }
+
   public function updateBooking(string $booking_id, array $data)
   {
     return DB::transaction(function () use ($data, $booking_id) {
 
       $this->booking_repo->isBooked(
-        $data['meja_id'],
-        $data['jam_mulai'],
-        $data['jam_selesai']
+        $data['table_id'],
+        $data['start_time'],
+        $data['end_time']
       );
 
       return $this->update($booking_id, $data);

@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Enums\UserRole;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -18,6 +19,7 @@ class User extends Authenticatable
   /** @use HasFactory<\Database\Factories\UserFactory> */
   use HasFactory, Notifiable, HasApiTokens, HasRoles;
 
+  protected $appends = ['photo_url'];
   /**
    * The attributes that are mass assignable.
    *
@@ -62,13 +64,45 @@ class User extends Authenticatable
     return $this->HasMany(Booking::class);
   }
 
+  public function payment()
+  {
+    return $this->throughBookings()->payment();
+  }
+
   public function hasRole($role)
   {
     return $this->role === UserRole::from($role);
   }
 
-  public function getPhotoUrlAttribute($value)
+  public function getPhotoUrlAttribute()
   {
-    return $this->photo ? url(Storage::url($value)) : url(Storage::url('img/default-profile'));
+    $path = $this->attributes['photo'] ?? null;
+    if (empty($path)) {
+      return asset('avatars/default_avatar.png');
+    }
+
+    if (filter_var($path, FILTER_VALIDATE_URL)) {
+      return $path;
+    }
+    return Storage::disk('public')->url($path);
   }
+
+  // protected function photoUrl(): Attribute
+  // {
+  //   return Attribute::make(
+  //     get: function (mixed $value, array $attributes) {
+
+  //       if (empty($attributes['photo'])) {
+  //         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name);
+  //       }
+
+  //       // Cceck if this external URL (e.g via Google login) or local storage
+  //       if (filter_var($attributes['photo'], FILTER_VALIDATE_URL)) {
+  //         return $attributes['photo'];
+  //       }
+
+  //       return Storage::url($attributes['photo']);
+  //     },
+  //   );
+  // }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\BookingPaymentController;
 use App\Http\Controllers\JadwalController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TableController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -31,8 +32,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
   Route::apiResource('bookings.payments', BookingPaymentController::class)->withTrashed();
 });
   Route::apiResource('bookings', BookingController::class)->withTrashed();
-  Route::get('/users', function(){
-    return User::all();
-  });
+  Route::apiResource('profiles', ProfileController::class);
 
 require __DIR__ . '/auth.php';

@@ -21,9 +21,10 @@ class BookingResource extends JsonResource
       'booking_info' => new UserResource($this->whenLoaded('user')),
       'duration' => $this->duration,
       'total_price' => $this->total_price,
-      'schedule' => $this->start_time->translatedFormat('d F') . ', ' .
-                  $this->start_time->translatedFormat('H:i') . ' s/d ' .
-                  $this->end_time->translatedFormat('H:i')
+      'status' => $this->status,
+      // 'start_time' => $this->start_time,
+      // 'end_time' => $this->end_time,
+      'schedule' => $this->schedule
     ];
   }
 }

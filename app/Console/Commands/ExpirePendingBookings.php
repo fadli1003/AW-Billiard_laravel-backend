@@ -30,8 +30,8 @@ class ExpirePendingBookings extends Command
 
     $affected = \App\Models\Booking::where('status', 'pending')
       ->where('created_at', '<', $expiredTime)
-      ->update(['status' => BookingStatus::cancelled->value]);
+      ->update(['status' => BookingStatus::expired->value]);
 
-    $this->info("The $affected expired-pending status booking, cancelled successfully.");
+    $this->info("The $affected pending status booking, status updated to expired successfully.");
   }
 }

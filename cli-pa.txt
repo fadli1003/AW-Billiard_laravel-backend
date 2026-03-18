@@ -1,15 +1,15 @@
-pa make:model Meja -cmR --api
+pa make:model Table -cmR --api
 sleep(1)
 pa make:model Booking -cmR --api
 sleep(1)
-pa make:model Jadwal -cmR --api
+pa make:model Schedule -cmR --api
 sleep(1)
 pa make:model Payment -cmR --api
 sleep(1)
 
 
 pa make:request BookingRequest
-pa make:request MejaRequest
+pa make:request TableRequest
 pa make:resource BookingResource
 pa make:resource PaymentResource
 
