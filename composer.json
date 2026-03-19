@@ -38,6 +38,7 @@
         }
     },
     "scripts": {
+        "84-serve": "@php84 -S api.aw-bl.test:8000 -t public",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

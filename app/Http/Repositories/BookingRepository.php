@@ -12,12 +12,12 @@ class BookingRepository
 {
   public function getAll(array $fields)
   {
-    return Booking::with('table', 'user')->select($fields)->latest()->paginate();
+    return Booking::with('table:id,table_code', 'user:id,name,phone')->select($fields)->latest()->paginate();
   }
 
   public function getById(string $id, array $fields)
   {
-    return Booking::with('table', 'user')->select($fields)->findOrFail($id);
+    return Booking::with('table:id,table_code', 'user:name,phone')->select($fields)->findOrFail($id);
   }
 
   public function create(array $data)

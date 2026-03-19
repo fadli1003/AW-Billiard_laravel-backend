@@ -4,8 +4,8 @@ namespace App\Rules;
 
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use App\Models\Meja;
 use App\Enums\TableStatus;
+use App\Models\Table;
 
 class TableIsAvailable implements ValidationRule
 {
@@ -16,11 +16,11 @@ class TableIsAvailable implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-      $table = Meja::find($value);
+      $table = Table::find($value);
 
-      if (!$table || !$table->status === TableStatus::available) {
-        $fail('Sorry, The table you choosed is not available.');
+      if (!$table || !$table->status !== TableStatus::available) {
+        $fail('Sorry, The table you choose is not available during these hours.');
       }
-      
+
     }
 }

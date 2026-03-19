@@ -14,7 +14,7 @@ return new class extends Migration
   {
     Schema::create('tables', function (Blueprint $table) {
       $table->id();
-      $table->string('table_code', 10);
+      $table->string('table_code', 10)->index('table_code');
       $table->enum('type', ['standard', 'VIP']);
       $table->decimal('price_perhour', 10, 0);
       $table->enum('status', TableStatus::values())->default('available');

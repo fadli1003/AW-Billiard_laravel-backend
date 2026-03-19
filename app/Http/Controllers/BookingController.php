@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Http\Services\BookingService;
 use App\Http\Requests\BookingRequest;
 use App\Http\Resources\BookingResource;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
@@ -18,7 +19,7 @@ class BookingController extends Controller
 
   public function index()
   {
-    $fields = ['*'];
+    $fields = ['id', 'table_id', 'user_id', 'start_time', 'end_time', 'duration', 'status', 'total_price'];
     $bookings = $this->bookingService->getAll($fields);
     return BookingResource::collection($bookings);
   }
@@ -64,7 +65,8 @@ class BookingController extends Controller
   public function store(BookingRequest $request)
   {
     $data = $request->validated();
-    $data['end_time'] = $data['start_time']->addHour($data['duration']);
+    $start_time = Carbon::parse($data['start_time']);
+    $data['end_time'] = $start_time->copy()->addHour($data['duration']);
 
     // if(Auth::user()->role === 'admin' && $data['cash'] === true) {
     //   $data['status'] = 'confirmed';
@@ -86,7 +88,8 @@ class BookingController extends Controller
 
   public function show(Booking $booking)
   {
-    return response()->json(new BookingResource($booking));
+    $booking->load('table:id,table_code', 'user:id,name,phone');
+    return new BookingResource($booking);
   }
 
   public function update(BookingRequest $request, Booking $booking)

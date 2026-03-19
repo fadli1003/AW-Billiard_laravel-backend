@@ -127,6 +127,13 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        //costum channel
+        'query' => [
+          'driver' => 'single',
+          'path' => storage_path('logs/query-debug.log'),
+          'level' => 'debug'
+        ],
+
     ],
 
 ];

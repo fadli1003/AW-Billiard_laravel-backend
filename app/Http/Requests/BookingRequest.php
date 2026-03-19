@@ -30,8 +30,8 @@ class BookingRequest extends FormRequest
       'table_id' => ['required', 'exists:tables,id', new TableIsAvailable],
       'start_time' => 'required|date|after:now',
       'duration' => 'required|integer|min:1|max:5',
-      'amount_paid' => 'required|numeric|min:20000',
-      'total_price' => 'required|numeric|min:10000',
+      'amount_paid' => 'required|numeric|min:10000',
+      'total_price' => 'required|numeric|min:20000',
       // 'cash' => 'required|boolean'
     ];
   }

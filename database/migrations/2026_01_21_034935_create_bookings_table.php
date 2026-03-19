@@ -22,9 +22,9 @@ return new class extends Migration
       // $table->boolean('cash')->default(false);
       $table->decimal('total_price', 10, 0);
       $table->enum('status', BookingStatus::values())->default('pending');
-      $table->index(['table_id', 'status', 'start_time', 'end_time'], 'idx_booking_availability');
       $table->softDeletes();
       $table->timestamps();
+      $table->index(['table_id', 'status', 'start_time', 'end_time', 'created_at', 'deleted_at'], 'idx_booking_availability');
     });
   }
 
