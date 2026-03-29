@@ -7,7 +7,11 @@ use App\Http\Services\BookingService;
 use App\Http\Requests\BookingRequest;
 use App\Http\Resources\BookingResource;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\DB;
+
+use function Pest\Laravel\json;
+use function PHPUnit\Framework\isEmpty;
 
 class BookingController extends Controller
 {
@@ -21,58 +25,66 @@ class BookingController extends Controller
   {
     $fields = ['id', 'table_id', 'user_id', 'start_time', 'end_time', 'duration', 'status', 'total_price'];
     $bookings = $this->bookingService->getAll($fields);
+    if(isEmpty($bookings)){
+      return response()->json([
+        'message' => 'No bookings was found.'
+      ]);
+    }
     return BookingResource::collection($bookings);
   }
 
-  // public function store(BookingRequest $request)
-  // {
+  /*
+  public function store(BookingRequest $request)
+  {
 
-  //   $end_time = $request->start_time->addHour($request->durasi);
+    $end_time = $request->start_time->addHour($request->durasi);
 
-  //   $isBooked = Booking::where('meja_id', $request->meja_id)
-  //                     ->where('status', BookingStatus::confirmed)
-  //                     ->whereTimeOverlap($request->start_time, $end_time)
-  //                     ->exists();
+    $isBooked = Booking::where('meja_id', $request->meja_id)
+                      ->where('status', BookingStatus::confirmed)
+                      ->whereTimeOverlap($request->start_time, $end_time)
+                      ->exists();
 
-  //   if($isBooked){
-  //     return response()->json([
-  //       'message' => 'Meja sudah dipesan di jam tersebut!'
-  //     ], 422);
-  //   }
+    if($isBooked){
+      return response()->json([
+        'message' => 'Meja sudah dipesan di jam tersebut!'
+      ], 422);
+    }
 
-  //   $data = $request->validated();
-  //   $data['end_time'] = $end_time;
-  //   DB::beginTransaction();
-  //   try {
-  //     $booking = Booking::create($data);
+    $data = $request->validated();
+    $data['end_time'] = $end_time;
+    DB::beginTransaction();
+    try {
+      $booking = Booking::create($data);
 
-  //     DB::commit();
-  //     return response()->json([
-  //       'message' => 'Booking created successfully.',
-  //       'data' => new BookingResource($booking)
-  //     ], 201);
-  //   }catch(\Exception $e) {
-  //     DB::rollBack();
+      DB::commit();
+      return response()->json([
+        'message' => 'Booking created successfully.',
+        'data' => new BookingResource($booking)
+      ], 201);
+    }catch(\Exception $e) {
+      DB::rollBack();
 
-  //     return response()->json([
-  //       'message' => 'Terjadi Kesalahan',
-  //       'error' => $e->getMessage(),
-  //       'data' => null
-  //     ], 500);
-  //   }
-  // }
+      return response()->json([
+        'message' => 'Terjadi Kesalahan',
+        'error' => $e->getMessage(),
+        'data' => null
+      ], 500);
+    }
+  }
+  */
 
   public function store(BookingRequest $request)
   {
     $data = $request->validated();
-    $start_time = Carbon::parse($data['start_time']);
-    $data['end_time'] = $start_time->copy()->addHour($data['duration']);
 
     // if(Auth::user()->role === 'admin' && $data['cash'] === true) {
     //   $data['status'] = 'confirmed';
     // }
 
     try {
+      $start_time = Carbon::parse($data['start_time']);
+      $data['end_time'] = $start_time->copy()->addHour($data['duration']);
+
       $booking = $this->bookingService->placeBooking($data);
       return response()->json([
         'message' => 'Booking created successfully.',
@@ -89,7 +101,14 @@ class BookingController extends Controller
   public function show(Booking $booking)
   {
     $booking->load('table:id,table_code', 'user:id,name,phone');
-    return new BookingResource($booking);
+    if($booking){
+      return response()->json([
+        'message' => 'Booking not found.',
+        'data' => $booking
+      ]);
+    } else {
+      return new BookingResource($booking);
+    }
   }
 
   public function update(BookingRequest $request, Booking $booking)
@@ -120,7 +139,14 @@ class BookingController extends Controller
 
   public function destroy(Booking $booking)
   {
-    $booking->delete();
-    return response()->json(['message' => 'Booking deleted successfully.'], 204);
+    try{
+      $booking->delete();
+      return response()->json(['message' => 'Booking deleted successfully.']);
+    }catch (Exception $e){
+      return response()->json([
+        'message' => 'Sometings wrong happend',
+        'error' => $e->getMessage()
+      ]);
+    }
   }
 }

@@ -29,8 +29,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
   // Route::apiResource('payments', PaymentController::class)->withTrashed();
 
   //Nested resources
+  });
   Route::apiResource('bookings.payments', BookingPaymentController::class)->withTrashed();
-});
   Route::apiResource('bookings', BookingController::class)->withTrashed();
   Route::apiResource('profiles', ProfileController::class);
 

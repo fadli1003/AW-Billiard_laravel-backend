@@ -25,6 +25,11 @@ class TableController extends Controller
   public function store(TableRequest $request)
   {
     $data = $request->validated();
+    if($data['type'] === 'standard') {
+      $data['table_code'] = 'std-'.$request->table_code;
+    } else {
+      $data['type'] = 'vip-'.$request->table_code;
+    }
     try{
       $table = Table::create($data);
       return response()->json([
@@ -65,6 +70,17 @@ class TableController extends Controller
 
   public function destroy(Table $table)
   {
-    //
+    try {
+      $table->delete();
+
+      return response()->json([
+        'message' => 'Table deleted successfully.'
+      ]);
+    } catch (\Exception $e){
+      return response()->json([
+        'message' => 'Somethings wrong happend',
+        'error' => $e->getMessage()
+      ], 400);
+    }
   }
 }

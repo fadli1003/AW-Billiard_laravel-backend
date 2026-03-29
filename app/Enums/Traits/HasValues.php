@@ -11,3 +11,4 @@ trait HasValues
     return array_column(self::cases(), 'name');
   }
 }
+

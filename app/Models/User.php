@@ -66,7 +66,7 @@ class User extends Authenticatable
 
   public function payment()
   {
-    return $this->throughBookings()->payment();
+    return $this->hasManyThrough(Payment::class, Booking::class );
   }
 
   public function hasRole($role)
