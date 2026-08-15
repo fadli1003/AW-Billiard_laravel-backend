@@ -18,7 +18,7 @@ class TableIsAvailable implements ValidationRule
     {
       $table = Table::find($value);
 
-      if (!$table || !$table->status !== TableStatus::available) {
+      if (!$table || $table->status !== TableStatus::available) {
         $fail('Sorry, The table you choose is not available during these hours.');
       }
 

@@ -11,7 +11,6 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 
 use function Pest\Laravel\json;
-use function PHPUnit\Framework\isEmpty;
 
 class BookingController extends Controller
 {
@@ -25,7 +24,7 @@ class BookingController extends Controller
   {
     $fields = ['id', 'table_id', 'user_id', 'start_time', 'end_time', 'duration', 'status', 'total_price'];
     $bookings = $this->bookingService->getAll($fields);
-    if(isEmpty($bookings)){
+    if($bookings->isEmpty()){
       return response()->json([
         'message' => 'No bookings was found.'
       ]);

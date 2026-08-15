@@ -22,3 +22,4 @@ yarn-error.log
 /.vscode
 /.zed
 CLAUDE.md
+php_errors.log

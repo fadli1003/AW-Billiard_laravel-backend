@@ -34,7 +34,7 @@ class RegisterRequest extends FormRequest
                 ],
       'photo' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:2048',
       'address' => 'nullable|string|max:100',
-      'password' => 'required|confirmed|' . Password::min(6)->numbers()->symbols()->mixedCase(),
+      'password' => ['required', 'confirmed' , Password::min(6)->numbers()->symbols()->mixedCase()],
     ];
   }
 

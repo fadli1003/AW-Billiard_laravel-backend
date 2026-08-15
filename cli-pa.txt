@@ -13,10 +13,10 @@ pa make:request TableRequest
 pa make:resource BookingResource
 pa make:resource PaymentResource
 
-pa make:model OperationalHours -mcrR
+pa make:model OperationalHours -mcR
 pa make:controller HRM/PayrollController --model=Payroll --api --requests
 
-pa make:model Branch -mcrR --api
+pa make:model Branch -mcR --api
 
 pa make:class Http/Repositories/BranchRepository
 

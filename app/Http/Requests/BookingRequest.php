@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\BookingStatus;
 use App\Enums\TableStatus;
+use App\Models\Table;
 use App\Rules\TableIsAvailable;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -25,13 +26,16 @@ class BookingRequest extends FormRequest
    */
   public function rules(): array
   {
+    $price = Table::where('id', $this->table_id)->value('price_perhour') ?? 0;
+    // $min_amount = 0.5 * $price;
+
     return [
       'user_id' => 'required|exists:users,id',
       'table_id' => ['required', 'exists:tables,id', new TableIsAvailable],
       'start_time' => 'required|date|after:now',
       'duration' => 'required|integer|min:1|max:5',
-      'amount_paid' => 'required|numeric|min:10000',
-      'total_price' => 'required|numeric|min:20000',
+      'amount_paid' => ['required', Rule::numeric()->min($price * 0.5)],
+      'total_price' => ['required', Rule::numeric()->min($price)],
       // 'cash' => 'required|boolean'
     ];
   }
