@@ -2,6 +2,10 @@
 namespace App\Http\Repositories;
 
 use App\Models\Payment;
+use App\Models\User;
+use Exception;
+
+use function Pest\Laravel\json;
 
 class PaymentRepository{
 
@@ -13,8 +17,16 @@ class PaymentRepository{
     return Payment::select($fields)->findOrFail($id);
   }
 
-  public function getUserPayments(string $userId, array $fields){
-    return Payment::select($fields)->where('user_id', $userId);
+  public function getUserPayments(string $userId, array $fields, array $relations){
+    $user = User::find($userId);
+
+    if(!$user) {
+      return response()->json([
+        'message' => 'No user were selected.'
+      ]);
+    }
+
+    return $user->payments()->select($fields)->with($relations)->latest();
   }
 
   public function create(array $data){
@@ -26,7 +38,7 @@ class PaymentRepository{
     $payment->update($data);
     return $payment;
   }
-  
+
   public function delete(string $id){
     $payment = Payment::findOrFail($id);
     $payment->delete($id);

@@ -21,7 +21,7 @@ Route::middleware(['guest'])->group(function () {
   Route::get('/snap-token', [BookingPaymentController::class, 'getToken']);
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'throttle:5,1'])->group(function () {
   //Users
   Route::get('/users/{id}/bookings', [BookingController::class, 'users.bookings']);
 
@@ -33,5 +33,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
   Route::apiResource('bookings.payments', BookingPaymentController::class)->withTrashed();
   Route::apiResource('bookings', BookingController::class)->withTrashed();
   Route::apiResource('profiles', ProfileController::class);
+
+  Route::get('/payments', [BookingPaymentController::class, 'index']);
 
 require __DIR__ . '/auth.php';

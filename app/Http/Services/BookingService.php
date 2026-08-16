@@ -11,7 +11,7 @@ use Illuminate\Validation\ValidationException;
 
 class BookingService
 {
-  private $booking_repo;
+  private BookingRepository $booking_repo;
   public function __construct(BookingRepository $booking_repo)
   {
     $this->booking_repo = $booking_repo;
@@ -76,7 +76,7 @@ class BookingService
         'status' => 'pending',
       ]);
       DB::commit();
-      
+
       return $booking;
 
     } catch (\Exception $e) {

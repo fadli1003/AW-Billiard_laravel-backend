@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Payment extends Model
@@ -23,12 +25,12 @@ class Payment extends Model
     'status' => PaymentStatus::class
   ];
 
-  public function bookings()
+  public function booking() : HasOne
   {
-    return $this->hasMany(Booking::class);
+    return $this->hasOne(Booking::class);
   }
-  public function users()
+  public function user(): HasOneThrough
   {
-    return $this->hasManyThrough(User::class, Booking::class);
+    return $this->hasOneThrough(User::class, Booking::class);
   }
 }

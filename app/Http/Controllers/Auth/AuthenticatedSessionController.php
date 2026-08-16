@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\UserResource;
 use Exception;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 // /** @property \App\Models\User $user */
