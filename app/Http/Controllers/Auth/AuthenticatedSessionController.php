@@ -32,9 +32,9 @@ class AuthenticatedSessionController extends Controller
         ||$request->has('device_name')))
       {
         // $user->tokens->delete();
+        }
         $token = $user->createToken('auth_token')->plainTextToken;
         $data["token"] = $token;
-      }
 
       // $request->session()->regenerate();
       return response()->json([

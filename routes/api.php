@@ -23,7 +23,7 @@ Route::middleware(['guest'])->group(function () {
 
 Route::middleware(['auth:sanctum', 'verified', 'throttle:5,1'])->group(function () {
   //Users
-  Route::get('/users/{id}/bookings', [BookingController::class, 'users.bookings']);
+  Route::get('/users/{userId}/bookings', [BookingController::class, 'userBookings']);
 
   Route::apiResource('tables', TableController::class);
   // Route::apiResource('payments', PaymentController::class)->withTrashed();

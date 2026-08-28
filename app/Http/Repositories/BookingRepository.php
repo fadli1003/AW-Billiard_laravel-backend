@@ -20,6 +20,11 @@ class BookingRepository
     return Booking::with('table:id,table_code', 'user:name,phone')->select($fields)->findOrFail($id);
   }
 
+  public function getByUserId(string $userId, array $fields)
+  {
+    return Booking::where('user_id', $userId)->with('table:table_code')->select($fields)->latest();
+  }
+
   public function create(array $data)
   {
     return Booking::create($data);

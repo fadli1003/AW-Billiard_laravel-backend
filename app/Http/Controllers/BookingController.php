@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Http\Services\BookingService;
 use App\Http\Requests\BookingRequest;
 use App\Http\Resources\BookingResource;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -71,6 +72,26 @@ class BookingController extends Controller
     }
   }
   */
+
+  public function userBookings(string $userId)
+  {
+    // if(auth()->user()->role !== 'admin'){
+    //   abort(403, 'Access Forbidden.');
+    // }
+    try{
+      $fields = ['id', 'table_id', 'start_time', 'end_time', 'duration', 'status', 'total_price'];
+      // $userBookings = $this->bookingService->getByUserId($userId, $fields);
+      $userBookings = Booking::where('user_id', $userId)->with('table:table_code')->latest()->get($fields);
+      return response()->json([
+        'data' => new BookingResource($userBookings) //gak passing ke BookingResource, padahal di dump and die ada fields nya
+      ]);
+    } catch (Exception $e) {
+      return response()->json([
+        'message' => 'Terjadi kesalahan.',
+        'error' => $e->getMessage()
+      ]);
+    }
+  }
 
   public function store(BookingRequest $request)
   {

@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Http\Repositories\BookingRepository;
 use App\Models\Meja;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +26,11 @@ class BookingService
   public function getById(string $id, array $fields)
   {
     return $this->booking_repo->getById($id, $fields);
+  }
+
+  public function getByUserId(string $userId, array $fields)
+  {
+    return $this->booking_repo->getByUserId($userId, $fields);
   }
 
   public function create(array $data)
