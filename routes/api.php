@@ -24,6 +24,7 @@ Route::middleware(['guest'])->group(function () {
 Route::middleware(['auth:sanctum', 'verified', 'throttle:5,1'])->group(function () {
   //Users
   Route::get('/users/{userId}/bookings', [BookingController::class, 'userBookings']);
+  Route::get('/users', [ProfileController::class, 'index']);
 
   Route::apiResource('tables', TableController::class);
   // Route::apiResource('payments', PaymentController::class)->withTrashed();
