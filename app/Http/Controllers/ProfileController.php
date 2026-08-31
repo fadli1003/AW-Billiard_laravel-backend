@@ -10,10 +10,13 @@ use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
-  public function index()
+  public function index($q = '')
   {
     $today = Carbon::today()->toDateString();
     try{
+      if($q) {
+        return UserResource::collection(User::select('*')->where('name', 'like', '%'. $q .'%')->orWhere('email', 'like', '%'. $q .'%')->get());
+      }
       return UserResource::collection(User::select('*')->where('role', '!=', 'admin')
               // ->with(['booking' => function ($q) use ($today){
               //   $q->where('start_time', '>=', $today );
