@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use App\Http\Requests\BookingPaymentRequest;
 use App\Http\Resources\BookingPaymentResource;
 use App\Models\Payment;
@@ -9,27 +10,43 @@ use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Http\Services\PaymentService;
+use Illuminate\Http\Request;
 
 class BookingPaymentController extends Controller
 {
-  public function index()
+  public PaymentService $paymentService;
+
+  public function __construct(PaymentService $paymentService) {
+    $this->paymentService = $paymentService;
+  }
+
+  public function index(?string $search = '')
   {
     try{
-      $allPayment = User::with('payments')->get();
-      $userPayment = Auth::user()->with('payments')->get();
+      $allPayment = $this->paymentService->getFilteredPayments($search);
+      $userPayment = $this->paymentService->getUserPayments(auth()->id(), ['*']);
+
+
       if($userPayment->isEmpty() || $allPayment->isEmpty()){
         return response([
-          'message' => 'User booking payment not found.'
+          'message' => 'User does not have any transactions .'
           ]);
-          }
-      if(!Auth::user()->role('admin')){
+      }
+
+      if(Auth::user()->role(UserRole::admin || UserRole::manager)){
         return response()->json([
           'data' => new BookingPaymentResource($allPayment)
         ]);
+      } elseif (auth()->user()->role === UserRole::customer) {
+        return response()->json([
+          'data' => new BookingPaymentResource($userPayment),
+        ]);
+      } else {
+        return response()->json([
+          'message' => 'Access forbidden.'
+        ]);
       }
-      return response()->json([
-        'data' => new BookingPaymentResource($userPayment),
-      ]);
     } catch (Exception $e){
       return response()->json([
         'message' => 'Sometings wrong happend',

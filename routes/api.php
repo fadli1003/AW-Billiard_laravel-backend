@@ -3,7 +3,7 @@
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\BookingPaymentController;
 use App\Http\Controllers\JadwalController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\TableController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 });
 
 Route::middleware(['guest'])->group(function () {
-  Route::get('/jadwal', [JadwalController::class, 'index']);
+  Route::get('/schedules', [JadwalController::class, 'index']);
 
   //Webhooks midtrans
   Route::post('/payments/notification', [BookingPaymentController::class, 'paymentNotification']);
@@ -24,7 +24,7 @@ Route::middleware(['guest'])->group(function () {
 Route::middleware(['auth:sanctum', 'verified', 'throttle:5,1'])->group(function () {
   //Users
   Route::get('/users/{userId}/bookings', [BookingController::class, 'userBookings']);
-  Route::get('/users', [ProfileController::class, 'index']);
+  Route::get('/users', [UserController::class, 'index']);
 
   Route::apiResource('tables', TableController::class);
   // Route::apiResource('payments', PaymentController::class)->withTrashed();
@@ -33,7 +33,7 @@ Route::middleware(['auth:sanctum', 'verified', 'throttle:5,1'])->group(function 
   });
   Route::apiResource('bookings.payments', BookingPaymentController::class)->withTrashed();
   Route::apiResource('bookings', BookingController::class)->withTrashed();
-  Route::apiResource('profiles', ProfileController::class);
+  Route::apiResource('profiles', UserController::class);
 
   Route::get('/payments', [BookingPaymentController::class, 'index']);
 

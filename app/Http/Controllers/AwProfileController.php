@@ -6,10 +6,11 @@ use App\Models\AwProfile;
 use App\Http\Requests\StoreAwProfileRequest;
 use App\Http\Requests\UpdateAwProfileRequest;
 use App\Http\Resources\AwProfileResource;
+use Illuminate\Http\JsonResponse;
 
 class AwProfileController extends Controller
 {
-  public function index()
+  public function index() : JsonResponse
   {
     return response()->json(new AwProfileResource(AwProfile::all()));
   }

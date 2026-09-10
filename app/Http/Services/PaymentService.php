@@ -29,4 +29,10 @@ class PaymentService {
   public function delete(string $id){
     return $this->payment_repo->delete($id);
   }
+
+  public function getFilteredPayments(?string $search = null, int $perPage = 15)
+  {
+    $cleanSearch = $search ? trim($search) : null;
+    return $this->payment_repo->getPaginatedWithSearch($cleanSearch, $perPage);
+  }
 }
