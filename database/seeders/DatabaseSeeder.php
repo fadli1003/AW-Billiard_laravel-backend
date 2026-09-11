@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Enums\BookingStatus;
 use App\Enums\TableStatus;
+use App\Enums\UserRole;
 use App\Models\Booking;
 use App\Models\Table;
 use App\Models\User;
@@ -18,14 +19,30 @@ class DatabaseSeeder extends Seeder
    */
   public function run(): void
   {
-    // User::factory(10)->create();
-
-    User::create([
+    $this->call(RolePermissionSeeder::class);
+    $this->call(BookingPaymentSeeder::class);
+    $admin = User::create([
       'name' => 'Admin',
       'email' => 'admin@example.com',
       'password' => Hash::make('password'),
-      'role' => 'admin'
     ]);
+    $admin->assignRole([UserRole::admin]);
+
+    $staffs = User::factory(5)->create([
+      'password' => Hash::make('password'),
+    ]);
+    $staffs->each(function (User $staff) {
+      $staff->assignRole(UserRole::staff);
+    });
+
+    $customers = User::factory(5)->create([
+      'password'=> Hash::make('password'),
+    ]);
+    $customers->each(function (User $customer) {
+      $customer->assignRole(UserRole::customer);
+    });
+
+
     Table::create([
       'table_code' => "std-1",
       'type' => "standard",
@@ -42,5 +59,7 @@ class DatabaseSeeder extends Seeder
       'total_price' => 30000,
       'status' => BookingStatus::confirmed
     ]);
+
+
   }
 }

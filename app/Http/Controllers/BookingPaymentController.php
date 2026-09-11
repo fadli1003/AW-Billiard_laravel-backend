@@ -21,38 +21,9 @@ class BookingPaymentController extends Controller
     $this->paymentService = $paymentService;
   }
 
-  public function index(?string $search = '')
+  public function index()
   {
-    try{
-      $allPayment = $this->paymentService->getFilteredPayments($search);
-      $userPayment = $this->paymentService->getUserPayments(auth()->id(), ['*']);
-
-
-      if($userPayment->isEmpty() || $allPayment->isEmpty()){
-        return response([
-          'message' => 'User does not have any transactions .'
-          ]);
-      }
-
-      if(Auth::user()->role(UserRole::admin || UserRole::manager)){
-        return response()->json([
-          'data' => new BookingPaymentResource($allPayment)
-        ]);
-      } elseif (auth()->user()->role === UserRole::customer) {
-        return response()->json([
-          'data' => new BookingPaymentResource($userPayment),
-        ]);
-      } else {
-        return response()->json([
-          'message' => 'Access forbidden.'
-        ]);
-      }
-    } catch (Exception $e){
-      return response()->json([
-        'message' => 'Sometings wrong happend',
-        'error' => $e->getMessage()
-      ]);
-    }
+    
   }
 
   public function store(BookingPaymentRequest $request)

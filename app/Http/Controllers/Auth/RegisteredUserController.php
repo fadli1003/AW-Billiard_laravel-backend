@@ -25,11 +25,8 @@ class RegisteredUserController extends Controller
     DB::beginTransaction();
     try{
       $data['password'] = bcrypt($data['password']);
-      $data['role'] = UserRole::customer;
       $user = User::create($data);
-
-      // $user = new User($data);
-      // $user->save(); sama aja tapi nambah satu baris
+      $user->assignRole(UserRole::customer);
 
       $token = $user->createToken('auth_token')->plainTextToken;
       $request->session()->regenerate();
@@ -42,7 +39,7 @@ class RegisteredUserController extends Controller
         'token' => $token
       ], 201);
 
-    } catch (\Exception $e){
+    } catch (Exception $e){
       DB::rollBack();
       return response()->json([
         'message' => 'Terjadi kesalahan',

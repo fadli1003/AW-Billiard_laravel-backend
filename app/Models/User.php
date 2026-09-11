@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Enums\UserRole;
+use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,7 +18,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
   /** @use HasFactory<\Database\Factories\UserFactory> */
-  use HasFactory, Notifiable, HasApiTokens, HasRoles;
+  use HasFactory, Notifiable, HasApiTokens, HasRoles, SoftDeletes;
 
   protected $appends = ['photo_url'];
   /**
@@ -32,7 +33,6 @@ class User extends Authenticatable
     'email',
     'address',
     'password',
-    'role'
   ];
 
   /**
@@ -45,6 +45,8 @@ class User extends Authenticatable
     'remember_token',
   ];
 
+  protected $guard_name = 'sanctum';
+
   /**
    * Get the attributes that should be cast.
    *
@@ -54,8 +56,7 @@ class User extends Authenticatable
   {
     return [
       'email_verified_at' => 'datetime',
-      'password' => 'hashed',
-      'role' => UserRole::class
+      'password' => 'hashed'
     ];
   }
 
@@ -69,10 +70,10 @@ class User extends Authenticatable
     return $this->hasManyThrough(Payment::class, Booking::class );
   }
 
-  public function hasRole($role)
-  {
-    return $this->role === UserRole::from($role);
-  }
+  // public function hasRole($role)
+  // {
+  //   return $this->role === UserRole::from($role);
+  // }
 
   public function getPhotoUrlAttribute()
   {

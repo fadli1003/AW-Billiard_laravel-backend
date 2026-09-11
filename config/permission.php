@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'models' => [
 
         /*
@@ -199,4 +198,6 @@ return [
 
         'store' => 'default',
     ],
+
+    'guard_name' => 'sanctum',
 ];

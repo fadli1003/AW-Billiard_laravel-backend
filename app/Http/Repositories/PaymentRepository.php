@@ -2,19 +2,43 @@
 
 namespace App\Http\Repositories;
 
+use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Request;
 
 use function Pest\Laravel\json;
 
 class PaymentRepository
 {
 
-  public function getAll(array $fields)
+  public function getALl(Request $request, int $perPage = 15, array $fields = ['*'], array $relations = []): LengthAwarePaginator
   {
-    return Payment::select($fields)->latest()->paginate(30);
+    return Payment::query()
+      ->select($fields)
+      ->with($relations)
+      ->when($request->filled('search'), function ($query) use ($request) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+          $q->where('order_id', 'like', "%{$search}%")
+            ->orWhere('booking_id', 'like', "%{$search}%");
+        });
+      })
+      ->when($request->filled('status'), function ($query) use ($request) {
+        $query->where('status', $request->status);
+      })
+      ->when($request->filled('payment_type'), function ($query) use ($request) {
+        $query->where('payment_type', $request->payment_type);
+      })
+      ->when($request->filled('weekly') && is_array($request->weekly), function ($query) use ($request) {
+        $query->whereBetween('created_at', $request->weekly);
+      })
+      ->latest()
+      ->paginate($perPage)
+      ->withQueryString();
   }
 
   public function getById(string $id, array $fields)
@@ -43,8 +67,7 @@ class PaymentRepository
   public function update(string $id, array $data)
   {
     $payment = Payment::findOrFail($id);
-    $payment->update($data);
-    return $payment;
+    return $payment->update($data);
   }
 
   public function delete(string $id)
@@ -53,18 +76,8 @@ class PaymentRepository
     $payment->delete($id);
   }
 
-  public function getPaginatedWithSearch(?string $search = null, int $perPage = 15): LengthAwarePaginator
+  public function getBookingPayment(string $booking_id, array $fields)
   {
-    return Payment::query()
-      ->when($search, function ($query, $search) {
-        $query->where(function ($q) use ($search) {
-          $q->where('id', 'like', "%{$search}%")
-            ->orWhere('booking_id', 'like', "%{$search}%");
-        });
-      })
-      ->latest()
-      ->paginate($perPage)
-      // Memastikan query string `?search=...` tidak hilang saat klik tombol next page
-      ->withQueryString();
+    return Payment::where('booking_id', $booking_id)->select($fields)->with(['booking', 'user'])->first();
   }
 }

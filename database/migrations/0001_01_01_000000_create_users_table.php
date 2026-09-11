@@ -14,7 +14,6 @@ return new class extends Migration
   {
     Schema::create('users', function (Blueprint $table) {
       $table->id();
-      $table->enum('role', UserRole::values())->default(UserRole::customer->value);
       $table->boolean('is_active')->default(true);
       $table->string('name', 50);
       $table->string('email', 50)->unique();

@@ -17,12 +17,12 @@ class BookingRepository
 
   public function getById(string $id, array $fields)
   {
-    return Booking::with('table:id,table_code', 'user:name,phone')->select($fields)->findOrFail($id);
+    return Booking::with('table:id,table_code', 'user:id,name,phone')->select($fields)->findOrFail($id);
   }
 
   public function getByUserId(string $userId, array $fields)
   {
-    return Booking::where('user_id', $userId)->with('table:table_code')->select($fields)->latest();
+    return Booking::where('user_id', $userId)->with('table:id,table_code')->select($fields)->latest();
   }
 
   public function create(array $data)

@@ -9,9 +9,9 @@ enum UserRole: String
 
   case owner = 'owner';
   case admin = 'admin';
-  case staff = 'staff';
-  case coach = 'coach';
   case manager = 'manager';
+  case staff = 'staff';
+  case cashier = 'cashier';
   case customer = 'customer';
 
   // public static function values(): array {

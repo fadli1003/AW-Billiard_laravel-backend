@@ -7,7 +7,7 @@ use App\Models\Table;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class JadwalController extends Controller
+class ScheduleController extends Controller
 {
   public function index(Request $request = null)
   {
