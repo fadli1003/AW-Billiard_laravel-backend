@@ -8,7 +8,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 // /** @property \App\Models\User $user */
@@ -20,9 +22,17 @@ class AuthenticatedSessionController extends Controller
    */
   public function store(LoginRequest $request): JsonResponse
   {
+    // $auth = $request->validated();
     try {
       $request->authenticate();
       $user = Auth::user();
+      // $user = User::where("email", $auth["email"])->first();
+
+      // if(! $user || Hash::check($auth["password"], $user->password)) {
+      //   throw ValidationException::withMessages(["email"=> "The provide crede"]);
+      // }
+
+      // Auth::guard('web')->login($auth);
 
       $data = [
         'user' => new UserResource($user),
@@ -32,7 +42,7 @@ class AuthenticatedSessionController extends Controller
         ||$request->has('device_name')))
       {
         // $user->tokens->delete();
-        }
+      }
         $token = $user->createToken('auth_token')->plainTextToken;
         $data["token"] = $token;
 

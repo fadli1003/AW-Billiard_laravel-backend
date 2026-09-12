@@ -198,6 +198,4 @@ return [
 
         'store' => 'default',
     ],
-
-    'guard_name' => 'sanctum',
 ];

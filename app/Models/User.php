@@ -18,7 +18,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
   /** @use HasFactory<\Database\Factories\UserFactory> */
-  use HasFactory, Notifiable, HasApiTokens, HasRoles, SoftDeletes;
+  use HasFactory, Notifiable, HasApiTokens, HasRoles;
 
   protected $appends = ['photo_url'];
   /**
@@ -44,8 +44,6 @@ class User extends Authenticatable
     'password',
     'remember_token',
   ];
-
-  protected $guard_name = 'sanctum';
 
   /**
    * Get the attributes that should be cast.

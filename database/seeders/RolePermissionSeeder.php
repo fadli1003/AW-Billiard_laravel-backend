@@ -38,15 +38,14 @@ class RolePermissionSeeder extends Seeder
     ];
 
     foreach ($permissions as $p) {
-      Permission::create(['guard_name' => 'sanctum', 'name' => $p]);
+      Permission::create(['name' => $p]);
     }
 
     //create roles and assign permission
-    $adminRole = Role::create(['guard_name' => 'sanctum', 'name' => UserRole::admin]);
-    $sanctumPermission = Permission::where('guard_name', 'sanctum')->get();
-    $adminRole->syncPermissions($sanctumPermission);
+    $adminRole = Role::create(['name' => UserRole::admin]);
+    $adminRole->syncPermissions(Permission::all());
 
-    $managerRole = Role::create(['guard_name' => 'sanctum', 'name' => UserRole::manager]);
+    $managerRole = Role::create(['name' => UserRole::manager]);
     $managerRole->givePermissionTo([
       'manage users',
       'edit all bookings',
@@ -54,20 +53,20 @@ class RolePermissionSeeder extends Seeder
       'access payments',
     ]);
 
-    $cashierRole = Role::create(['guard_name' => 'sanctum', 'name' => UserRole::cashier]);
+    $cashierRole = Role::create(['name' => UserRole::cashier]);
     $cashierRole->givePermissionTo([
       'create bookings',
       'edit own bookings',
       'delete own bookings',
     ]);
 
-    $staffRole = Role::create(['guard_name' => 'sanctum', 'name' => UserRole::staff]);
+    $staffRole = Role::create(['name' => UserRole::staff]);
     $staffRole->givePermissionTo([
       'access costumer delivery',
       'access payroll'
     ]);
 
-    $costumerRole = Role::create(['guard_name' => 'sanctum', 'name' => UserRole::customer]);
+    $costumerRole = Role::create(['name' => UserRole::customer]);
     $costumerRole->givePermissionTo([
       'create bookings',
       'edit own bookings',

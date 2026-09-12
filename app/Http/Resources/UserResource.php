@@ -20,7 +20,8 @@ class UserResource extends JsonResource
       // 'email_verified_at' => $this->email_verified_at,
       'phone' => $this->phone,
       'photo_url' => $this->photo_url,
-      'role' => $this->role,
+      'role' => $this->getRoleNames(),
+      'permission' => $this->getAllPermissions()->pluck('name'),
       'activeBooked' => $this->whenLoaded('bookings') ? true : false
     ];
   }
