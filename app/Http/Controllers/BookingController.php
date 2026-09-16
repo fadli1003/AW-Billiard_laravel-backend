@@ -49,7 +49,7 @@ class BookingController extends Controller
       ]);
     } catch (Exception $e) {
       return response()->json([
-        'message' => 'Terjadi kesalahan.',
+        'message' => 'Someting when wrong.',
         'error' => $e->getMessage(),
         'code' => $e->getCode()
       ]);
@@ -70,7 +70,7 @@ class BookingController extends Controller
       $booking = $this->bookingService->placeBooking($data);
       DB::commit();
       return response()->json([
-        'message' => 'Booking created successfully.',
+        'success' => 'Booking created successfully.',
         'data' => new BookingResource($booking)
       ], 201);
     } catch (Exception $e) {
@@ -85,10 +85,9 @@ class BookingController extends Controller
   public function show(Booking $booking)
   {
     $booking->load('table:id,table_code', 'user:id,name,phone');
-    if($booking){
+    if(!$booking){
       return response()->json([
-        'message' => 'Booking not found.',
-        'data' => $booking
+        'message' => 'Booking not found.'
       ]);
     } else {
       return new BookingResource($booking);
@@ -107,16 +106,15 @@ class BookingController extends Controller
 
       DB::commit();
       return response()->json([
-        'message' => 'Booking updated successfully.',
+        'success' => 'Booking updated successfully.',
         'data' => new BookingResource($booking),
       ]);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       DB::rollBack();
 
       return response()->json([
-        'message' => 'Something wrong happend',
+        'message' => 'Something when wrong',
         'error' => $e->getMessage(),
-        'data' => null
       ], 422);
     }
   }
@@ -125,10 +123,10 @@ class BookingController extends Controller
   {
     try{
       $booking->delete();
-      return response()->json(['message' => 'Booking deleted successfully.']);
+      return response()->json(['success' => 'Booking deleted successfully.']);
     }catch (Exception $e){
       return response()->json([
-        'message' => 'Sometings wrong happend',
+        'message' => 'Something when wrong',
         'error' => $e->getMessage()
       ]);
     }

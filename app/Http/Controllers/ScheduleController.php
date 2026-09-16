@@ -11,17 +11,17 @@ class ScheduleController extends Controller
 {
   public function index(Request $request = null)
   {
-    $selectedDate = $request ? $request->input('date') : null;
+    $selectedDate = $request ? $request->input('date') : now();
 
     $tables = Table::all();
 
-    $query = Booking::query();
+    $query = Booking::query()->with('table:table_code', 'user:name,email');
 
     if($selectedDate) {
       $query->where('booking_date', $selectedDate)->where('status', 'comfirmed');
     }
 
-    $bookings = $query->get();
+    $bookings = $query->latest()->paginate();
 
     foreach ($bookings as $booking) {
       if (is_string($booking->schedule_details)) {
@@ -29,17 +29,14 @@ class ScheduleController extends Controller
       }
     }
 
-    $filteredBookings = $bookings->filter(function ($booking) use ($selectedDate) {
-      if ($booking->booking_type === 'member' && $booking->valid_until) {
-        return Carbon::now()->lessThanOrEqualTo($booking->valid_until);
-      }
-      return true;
-    });
-
     $timeSlots = [];
     for ($hour = 7; $hour <= 22; $hour++) {
       $timeSlots[] = sprintf('%02d:00:00', $hour);
     }
+
+    return response()->json([
+      'data' => [$bookings, $timeSlots, $tables],
+    ]);
   }
 
   public function store(Request $request)

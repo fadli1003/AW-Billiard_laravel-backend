@@ -23,7 +23,7 @@ class BookingPaymentController extends Controller
 
   public function index()
   {
-    
+      
   }
 
   public function store(BookingPaymentRequest $request)
@@ -32,7 +32,7 @@ class BookingPaymentController extends Controller
     try{
       $payment = Payment::create($data);
       return response()->json([
-        'message' => 'Payment succeed.',
+        'success' => 'Payment succeed.',
         'data' => new BookingPaymentResource($payment)
       ]);
     } catch (Exception $e){
@@ -48,12 +48,14 @@ class BookingPaymentController extends Controller
   {
     $data = $request->validated();
     try{
-      if(!Auth::user()->role('admin') || Auth::user()->id !== $payment->users){
+      if(!Auth::user()->hasRole('admin') || Auth::user()->id !== $payment->user()->id()){
         return  abort(403, 'Access forbiden.');
       }
+
       $newPayment = $payment->update($data);
+
       return response()->json([
-        'message' => 'Payment information updated successfully.',
+        'success' => 'Payment information updated successfully.',
         'data' => new BookingPaymentResource($newPayment)
       ]);
     } catch (Exception $e) {
@@ -68,14 +70,17 @@ class BookingPaymentController extends Controller
   {
     DB::beginTransaction();
     try {
-      if(!Auth::user()->role('admin')){
+      if(!Auth::user()->hasRole('admin')){
         return abort(403, 'Access forbidden.');
       }
+
       $payment->delete();
       DB::commit();
+
       return response()->json([
-        'message' => 'Payment information deleted successfully.',
+        'success' => 'Payment information deleted successfully.',
       ]);
+
     } catch (Exception $e) {
       DB::callback();
       return response()->json([
